@@ -161,9 +161,9 @@ class CF7SmsExtension
                 );
             }
         } catch (\Exception $e) {
-            update_option('km_error', 'mail');
-            update_option('km_error_message', $e->getMessage());
-            $abort = true;
+            //update_option('km_error', 'mail');
+            //  update_option('km_error_message', $e->getMessage());
+            // $abort = true;
 
         }
 
