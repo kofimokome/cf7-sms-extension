@@ -2,11 +2,14 @@
 Receive text message notifications when a form is submitted. 
 
 This Plugin adds SMS Texting capability to Contact Form 7, from supported providers ( see list below ).
-Configure your forms to send Text messages to you and your visitors in the SMS tab in Contact Form 7 plugin.
+Configure your forms to send Text messages to you and your visitors from the SMS tab in Contact Form 7 plugin.
 It also allows for Text notifications when you receive through your forms.
 <br>
 
 <b>Note: This is just an extension. This plugin is not affiliated with or endorsed by Contact Form 7.</b>
+
+## Supported Providers
+1. Twillio
 
 ## Contribution
 The latest codes are found in the `develop` branch. If you would like to contribute, you should use the `develop` branch.
