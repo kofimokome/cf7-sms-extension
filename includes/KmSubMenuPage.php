@@ -46,7 +46,7 @@ class KmSubMenuPage
         <div class="wrap">
             <div id="icon-options-general" class="icon32"></div>
             <h1><?php echo $this->page_title ?></h1>
-            <strong>Please enter each word separated by white-spaces (spaces, newline, etc.) or comma in the boxes below</strong>
+            <strong>Please enter your credentials in the boxes below</strong>
             <?php settings_errors(); ?>
             <form method="post" action="options.php">
                 <?php
