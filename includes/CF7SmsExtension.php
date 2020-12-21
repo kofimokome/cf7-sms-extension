@@ -8,7 +8,9 @@
  */
 
 namespace kmcf7_sms_extension;
+require_once(plugin_dir_path(__DIR__) . 'providers/Twilio/autoload.php');
 
+use Twilio\Rest\Client;
 
 class CF7SmsExtension
 {
@@ -29,13 +31,39 @@ class CF7SmsExtension
         $this->log_file = $logs_root . 'messages.txt';
         $this->version = '1.0.0';
 
+
+        $to = +237670224092;//(isset($_POST["numbers"])) ? $_POST["numbers"] : "";
+        $sender_id = +15005550006; //(isset($_POST["sender"]))  ? $_POST["sender"]  : "";
+        $message = "test";// (isset($_POST["message"])) ? $_POST["message"] : "";
+
+        //gets our api details from the database.
+
+        $TWILIO_SID = get_option('kmcf7se_api_sid');
+        $TWILIO_TOKEN = get_option("kmcf7se_api_token");
+
+
+        /*try {
+            $client = new Client($TWILIO_SID, $TWILIO_TOKEN);
+            $response = $client->messages->create(
+                $to,
+                array(
+                    "from" => $sender_id,
+                    "body" => $message
+                )
+            );
+            var_dump($response->sid);
+            die("done");
+        } catch (\Exception $e) {
+            // self::DisplayError($e->getMessage());
+            die($e->getMessage());
+        }*/
     }
 
     public function run()
     {
         // $this->add_actions();
         // $this->add_options();
-        // $this->add_filters();
+        $this->add_filters();
         $this->add_main_menu();
         // $this->transfer_old_data();
     }
@@ -54,10 +82,15 @@ class CF7SmsExtension
         if (trim($message) != ''):
             ?>
             <div class="error notice is-dismissible">
-                <p><b>Gifted Mom Comment: </b><?php echo $message ?></p>
+                <p><b>CF7 SMS Extension: </b><?php echo $message ?></p>
             </div>
         <?php
         endif;
+    }
+
+    public function add_panels()
+    {
+
     }
 
     public function add_scripts($hook)
@@ -94,8 +127,8 @@ class CF7SmsExtension
         $settings_page->add_field(
             array(
                 'type' => 'text',
-                'id' => 'kmcf7se_restricted_words',
-                'label' => 'API Key: ',
+                'id' => 'kmcf7se_api_sid',
+                'label' => 'API SID: ',
                 'tip' => 'type <code>[link]</code> to filter messages containing links, type <code>[russian]</code> to filter messages contains russian characters',
                 'placeholder' => 'eg john, doe, baby, man, [link], [russian]'
             )
@@ -103,8 +136,8 @@ class CF7SmsExtension
         $settings_page->add_field(
             array(
                 'type' => 'text',
-                'id' => 'kmcf7se_spam_word_error',
-                'label' => 'API Key 2: ',
+                'id' => 'kmcf7se_api_token',
+                'label' => 'API Token: ',
                 'tip' => '',
                 'placeholder' => 'You have entered a word marked as spam'
             )
@@ -116,90 +149,103 @@ class CF7SmsExtension
 
     }
 
-    /**
-     * Todo: Add Description
-     *
-     * @since    2.0.0
-     * @access   public
-     */
-    private function add_options()
-    {
-
-        //
-        $reset_message_filter_counter = get_option('kmcfmf_message_filter_reset') == 'on' ? true : false;
-
-        $option_names = array(
-            'kmcfmf_messages_blocked',
-            'kmcfmf_last_message_blocked',
-            'kmcfmf_message_filter_reset',
-            'kmcfmf_date_of_today',
-            'kmcfmf_messages_blocked_today',
-            'kmcfmf_messages',
-            'kmcfmf_weekly_stats',
-            'kmcfmf_weekend',
-        );
-
-        foreach ($option_names as $option_name) {
-            if (get_option($option_name) == false) {
-                // The option hasn't been added yet. We'll add it with $autoload set to 'no'.
-                $deprecated = null;
-                $autoload = 'no';
-                add_option($option_name, 0, $deprecated, $autoload);
-            }
-
-            if ($reset_message_filter_counter) {
-                update_option($option_name, 0);
-            }
-
-        }
-//        if ($reset_message_filter_counter || file_get_contents($this->log_file) == '') {
-//            $content = "{}";
-//            file_put_contents($this->log_file, $content);
-//        }
-        update_option('kmcfmf_message_filter_reset', 'off');
-        update_option('kmcfmf_weekly_stats', get_option('kmcfmf_weekly_stats') == '0' ? '[0,0,0,0,0,0,0]' : get_option('kmcfmf_weekly_stats'));
-
-        $date = get_option('kmcfmf_date_of_today');
-        $now = strtotime(Date("d F Y"));
-        $today = date("N", $now);
-        if ((int)get_option('kmcfmf_weekend') == 0 || (int)get_option('kmcfmf_weekend') < (int)$now) {
-            $sunday = strtotime("+" . (7 - $today) . "day");
-            update_option('kmcfmf_weekend', $sunday);
-            update_option('kmcfmf_weekly_stats', '[0,0,0,0,0,0,0]');
-        }
-        if ((int)$date < (int)$now) {
-            $weekly_stats = json_decode(get_option('kmcfmf_weekly_stats'));
-            $weekly_stats[date('N', $date) - 1] = get_option("kmcfmf_messages_blocked_today");
-            update_option('kmcfmf_weekly_stats', json_encode($weekly_stats));
-            update_option("kmcfmf_date_of_today", $now);
-            update_option("kmcfmf_messages_blocked_today", 0);
-            update_option("kmcfmf_emails_blocked_today", 0);
-        }
-    }
 
     public function add_filters()
     {
-        add_filter('wpcf7_messages', array($this, 'add_custom_messages'), 10, 1);
+        add_filter('wpcf7_editor_panels', [$this, 'add_sms_panel'], 10, 1);
+        add_filter('wpcf7_contact_form_properties', [$this, 'add_sms_property'], 10, 1);
+    }
 
-        $enable_message_filter = get_option('kmcfmf_message_filter_toggle') == 'on' ? true : false;
-        $enable_email_filter = get_option('kmcfmf_email_filter_toggle') == 'on' ? true : false;
-        $enable_tags_by_names_filter = get_option('kmcfmf_tags_by_name_filter_toggle') == 'on' ? true : false;
+    public function add_sms_property($properties)
+    {
+        $properties = array_merge($properties, [
+            'kmsms' => array('active' => false,
+                'visitor_phone' => '',
+                'visitor_message' => 'Thank you for your message. We will get back to you as soon as possible.',
+                'visitor_name' => '',
+                'your_message' => 'A contact form submission has been made.')
+        ]);
+        return $properties;
+    }
 
-        if ($enable_email_filter) {
-            add_filter('wpcf7_validate_email', array($this, 'text_validation_filter'), 12, 2);
-            add_filter('wpcf7_validate_email*', array($this, 'text_validation_filter'), 12, 2);
-        }
+    public function add_sms_panel($panels)
+    {
+        $panels = array_merge($panels, [
+            'sms-panel' => array(
+                'title' => __('SMS Settings', 'contact-form-7'),
+                'callback' => [$this, 'editor_panel_sms'],
+            )
+        ]);
+        return $panels;
+    }
 
-        if ($enable_message_filter) {
-            add_filter('wpcf7_validate_textarea', array($this, 'textarea_validation_filter'), 12, 2);
-            add_filter('wpcf7_validate_textarea*', array($this, 'textarea_validation_filter'), 12, 2);
-        }
+    public function editor_panel_sms($post, $args = '')
+    {
+        $args = wp_parse_args($args, array(
+            'id' => 'wpcf7-kmsms',
+            'name' => 'kmsms',
+            'title' => __('Mail', 'contact-form-7'),
+            'use' => null,
+        ));
+        $id = esc_attr( $args['id'] );
+        var_dump($post);
+        $sms = wp_parse_args($post->prop($args['name']), array(
+            'active' => false,
+            'visitor_phone' => '',
+            'visitor_message' => '',
+            'visitor_name' => '',
+            'your_message' => '',
+        ));
+        $desc_link = wpcf7_link(
+            __('https://contactform7.com/additional-settings/', 'contact-form-7'),
+            __('Additional settings', 'contact-form-7'));
+        $description = __("You can add customization code snippets here. For details, see %s.", 'contact-form-7');
+        $description = sprintf(esc_html($description), $desc_link);
 
-        if ($enable_tags_by_names_filter) {
-            add_filter('wpcf7_validate_text', array($this, 'text_tags_by_name_validation_filter'), 12, 2);
-            add_filter('wpcf7_validate_text*', array($this, 'text_tags_by_name_validation_filter'), 12, 2);
-        }
+        ?>
+        <h1><?php echo esc_html(__('SMS Settings', 'cf7-sms-extension')); ?></h1>
+        You can use the following tags <?php $post->suggest_mail_tags(); ?>etc
+        <br><br>
 
+
+        <h2><?php echo esc_html(__('Text To Send  ( Auto reply, Visitor SMS )', 'cf7-sms-extension')); ?></h2>
+        <fieldset>
+            <legend>Visitor Phone Number</legend>
+            <input type="text" id="<?php echo $id ?>-visitor-phone" name="<?php echo $id ?>[visitor_phone]"
+                   class="large-text"
+                   data-config-field="<?php echo sprintf('%s.visitor_phone', esc_attr($args['name'])); ?>"
+                   value="<?php echo esc_attr($sms['visitor_phone']); ?>"
+                   placeholder="[your-phone-number]"/>
+        </fieldset>
+        <fieldset>
+            <legend>Visitor Auto Response Message:</legend>
+            <textarea id="<?php echo $id ?>-visitor-message" name="<?php echo $id ?>['visitor_message']" cols="100"
+                      rows="8"
+                      class="large-text"
+                      data-config-field="<?php echo sprintf('%s.visitor_message', esc_attr($args['name'])); ?>"
+                      placeholder="Your message has been received. We will get back to you shortly"><?php echo esc_textarea($post->prop('kmsms_extension')); ?></textarea>
+        </fieldset>
+        <h2><?php echo esc_html(__('Text To Receive ( From Form , Your SMS )', 'cf7-sms-extension')); ?></h2>
+        <fieldset>
+            <legend>Visitor Nick Name</legend>
+            <input type="text" id="<?php echo $id ?>-visitor-name" name="<?php echo $id ?>['visitor_name']"
+                   class="large-text"
+                   data-config-field="<?php echo sprintf('%s.visitor_name', esc_attr($args['name'])); ?>"
+                   placeholder="[your-name]"
+                   value="<?php echo esc_attr($sms['visitor_name']); ?>"/>
+        </fieldset>
+        <fieldset>
+            <legend>Your Response Message:</legend>
+            <textarea id="<?php echo $id ?>-your-message" name="<?php echo $id ?>['your-message']" cols="100" rows="8"
+                      class="large-text"
+                      data-config-field="<?php echo sprintf('%s.your_name', esc_attr($args['name'])); ?>"
+                      placeholder="A contact form submission has been made from [your-name]"><?php echo esc_textarea($sms['your-message']); ?></textarea>
+        </fieldset>
+        <br>
+        <fieldset>
+            <input type="checkbox" checked="checked"> Activate SMS Notification
+        </fieldset>
+        <?php
     }
 
     /**
@@ -238,201 +284,6 @@ class CF7SmsExtension
     }
 
     /**
-     * Filters text from form text elements from elems_names List
-     * @author: UnderWordPressure
-     * @since 1.2.3
-     */
-    function text_tags_by_name_validation_filter($result, $tag)
-    {
-
-        $name = $tag->name;
-        $names = preg_split('/[\s,]+/', get_option('kmcfmf_tags_by_name'));
-        if (in_array($name, $names)) {
-            $result = $this->textarea_validation_filter($result, $tag);
-        }
-
-        return $result;
-
-    }
-
-    /**
-     * Filters text from textarea
-     * @since 1.0.0
-     */
-    function textarea_validation_filter($result, $tag)
-    {
-        $name = $tag->name;
-
-        $found = false;
-
-        // UnderWordPressue: Change explode(" ", $values) to preg_split reason: whole whitespace range AND comma are valid separators
-        $check_words = preg_split('/[\s,]+/', get_option('kmcfmf_restricted_words'));
-
-        $message = isset($_POST[$name]) ? trim((string)$_POST[$name]) : '';
-
-        // UnderWordPressue: make all lowercase - safe is safe
-        $values = strtolower($message);
-        //$value = '';
-
-        // UnderWordPressue: Change explode(" ", $values) to preg_split([white-space]) -  reason: whole whitespace range are valid separators
-        //                   and rewrite the foreach loops
-        $values = preg_split('/\s+/', $values);
-        foreach ($values as $value) {
-            $value = trim($value);
-
-            foreach ($check_words as $check_word) {
-
-                /*if (preg_match("/^\.\w+/miu", $value) > 0) {
-                    $found = true;
-                }else if (preg_match("/\b" . $check_word . "\b/miu", $value) > 0) {
-                    $found = true;
-                }*/
-
-                $check_word = strtolower(trim($check_word));
-                switch ($check_word) {
-                    case '':
-                        break;
-                    case '[russian]':
-                        $found = preg_match('/[а-яА-Я]/miu', $value);
-                        break;
-                    case '[link]':
-                        $pattern = '/((ftp|http|https):\/\/\w+)|(www\.\w+\.\w+)/ium'; // filters http://google.com and http://www.google.com and www.google.com
-                        $found = preg_match($pattern, $value);
-                        break;
-                    default:
-
-                        $like_start = (preg_match('/^\*/', $check_word));
-                        $like_end = (preg_match('/\*$/', $check_word));
-
-                        # Remove leading and trailing asterisks from $check_word
-                        $regex_pattern = preg_quote(trim($check_word, '*'));
-
-                        if ($like_start) {
-                            $regex_pattern = '.*' . $regex_pattern;
-                        }
-                        if ($like_end) {
-                            $regex_pattern = $regex_pattern . '+.*';
-                        }
-
-                        $found = preg_match('/^' . $regex_pattern . '$/miu', $value);
-
-                        break;
-                }
-
-                if ($found) {
-                    break 2; // stops the first foreach loop since we have already identified a spam word
-                }
-            }
-
-        } // end of foreach($values...)
-
-
-        #####################
-        # Final evaluation. #
-        #####################
-
-        // Spam word is recognized
-        if ($found) {
-            $result->invalidate($tag, wpcf7_get_message('spam_word_error'));
-
-            $this->temp_email = $_POST['your-email'];
-
-            if (!$this->count_updated && $this->temp_email != '') {
-                $this->update_log($this->temp_email, $message);
-            }
-        } else {
-
-            // Check additional conditions on $message
-            if (empty($message)) {
-                // No content ($message) in a required Tag
-                if ($tag->is_required()) {
-                    $result->invalidate($tag, wpcf7_get_message('invalid_required'));
-                }
-            } else {
-
-                $maxlength = $tag->get_maxlength_option();
-                $minlength = $tag->get_minlength_option();
-
-                if ($maxlength && $minlength && $maxlength < $minlength) {
-                    $maxlength = $minlength = null;
-                }
-
-                $code_units = wpcf7_count_code_units(stripslashes($message));
-
-                if ($code_units) {
-                    if ($maxlength && $maxlength < $code_units) {
-                        $result->invalidate($tag, wpcf7_get_message('invalid_too_long'));
-                    } elseif ($minlength && $code_units < $minlength) {
-                        $result->invalidate($tag, wpcf7_get_message('invalid_too_short'));
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Filters text from text input fields
-     * @since 1.0.0
-     */
-    function text_validation_filter($result, $tag)
-    {
-        $name = $tag->name;
-        $check_words = explode(" ", get_option('kmcfmf_restricted_emails'));
-
-        $value = isset($_POST[$name])
-            ? trim(wp_unslash(strtr((string)$_POST[$name], "\n", " ")))
-            : '';
-
-        if ('text' == $tag->basetype) {
-            if ($tag->is_required() && '' == $value) {
-                $result->invalidate($tag, wpcf7_get_message('invalid_required'));
-            }
-        }
-
-        if ('email' == $tag->basetype) {
-            if ($tag->is_required() && '' == $value) {
-                $result->invalidate($tag, wpcf7_get_message('invalid_required'));
-            } elseif ('' != $value && !wpcf7_is_email($value)) {
-                $result->invalidate($tag, wpcf7_get_message('invalid_email'));
-            } else {
-                foreach ($check_words as $check_word) {
-                    if (strpos($value, $check_word) !== false) {
-                        $this->temp_message = $_POST['your-message'];
-                        $result->invalidate($tag, wpcf7_get_message('spam_email_error'));
-
-                        if (!$this->count_updated && $this->temp_message != '') {
-                            $this->update_log($value, $this->temp_message);
-                        }
-                    }
-                }
-            }
-        }
-
-        if ('' !== $value) {
-            $maxlength = $tag->get_maxlength_option();
-            $minlength = $tag->get_minlength_option();
-
-            if ($maxlength && $minlength && $maxlength < $minlength) {
-                $maxlength = $minlength = null;
-            }
-
-            $code_units = wpcf7_count_code_units(stripslashes($value));
-
-            if (false !== $code_units) {
-                if ($maxlength && $maxlength < $code_units) {
-                    $result->invalidate($tag, wpcf7_get_message('invalid_too_long'));
-                } elseif ($minlength && $code_units < $minlength) {
-                    $result->invalidate($tag, wpcf7_get_message('invalid_too_short'));
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Logs messages blockded to the log file
      * @since 1.2.0
      */
@@ -454,30 +305,6 @@ class CF7SmsExtension
         update_option('kmcfmf_weekly_stats', json_encode($weekly_stats));
 
         $this->count_updated = true;
-    }
-
-    /**
-     * Transfer data in old format to new format, when plugin is updated to from an older version to this version
-     * @since 1.2.0
-     */
-    private function transfer_old_data()
-    {
-        if (get_option('kmcfmf_messages') != '0') {
-            $messages = explode("]kmcfmf_message[", get_option('kmcfmf_messages'));
-            $log_messages = [];
-            for ($i = 0; $i < sizeof($messages); $i++) {
-                $data = explode("kmcfmf_data=", $messages[$i]);
-                if ($data[1] != '' && $data[2] != '' && $data[3] != '') {
-                    $log_message = ['message' => $data[1], 'date' => $data[3], 'email' => $data[2]];
-                    array_push($log_messages, $log_message);
-
-                }
-            }
-            $log_messages = json_encode((object)$log_messages);
-            file_put_contents($this->log_file, $log_messages);
-
-            update_option('kmcfmf_messages', 0);
-        }
     }
 
 }
