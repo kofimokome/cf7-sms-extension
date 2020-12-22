@@ -1,4 +1,4 @@
-=== Message Filter for Contact Form 7 ===
+=== SMS Extension for Contact Form 7 ===
 Contributors: kofimokome
 Donate link: www.kofimokome.stream
 Tags: sms, contact form, contact form 7, extension
@@ -44,4 +44,4 @@ We will add more providers with time.
 3. Options
 
 == How to Contribute ==
-The source codes can be downloaded here [GitHub](https://github.com/kofimokome/cf7-message-filter)
+The source codes can be downloaded here [GitHub](https://github.com/kofimokome/cf7-sms-extension)
