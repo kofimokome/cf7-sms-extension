@@ -20,7 +20,7 @@ It also allows for Text notifications when you receive through your forms.
 Note: This is just an extension. This plugin is not affiliated with or endorsed by Contact Form 7.
 
 == Supported Providers ==
-1. Twillio
+1. Twilio
 We will add more providers with time.
 
 == Installation ==

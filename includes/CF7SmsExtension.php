@@ -44,7 +44,7 @@ class CF7SmsExtension
 
         // add actions here
         add_action('wpcf7_save_contact_form', [$this, 'save_contact_form']);
-        add_action('wpcf7_before_send_mail', [$this, 'before_send_email'], 15, 3);
+        add_action('wpcf7_after_send_mail', [$this, 'before_send_email'], 15, 3);
 
 
     }
@@ -169,7 +169,7 @@ class CF7SmsExtension
 
 
         if ($props['mail']['recipient'] == '') {
-            $abort = true;
+            // $abort = true;
         }
     }
 
