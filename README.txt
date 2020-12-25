@@ -39,9 +39,8 @@ We will add more providers with time.
 
 == Screenshots ==
 
-1. Dashboard
-2. Blocked messages
-3. Options
+1. SMS Provider Configuration Page
+2. SMS Settings Page
 
 == How to Contribute ==
 The source codes can be downloaded here [GitHub](https://github.com/kofimokome/cf7-sms-extension)
