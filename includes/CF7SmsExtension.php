@@ -8,9 +8,6 @@
  */
 
 namespace kmcf7_sms_extension;
-require_once(plugin_dir_path(__DIR__) . 'providers/Twilio/autoload.php');
-
-use Twilio\Rest\Client;
 
 class CF7SmsExtension
 {
@@ -20,7 +17,7 @@ class CF7SmsExtension
     public function __construct()
     {
         // our constructor
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
     }
 
     /**
@@ -44,7 +41,7 @@ class CF7SmsExtension
 
         // add actions here
         add_action('wpcf7_save_contact_form', [$this, 'save_contact_form']);
-        add_action('wpcf7_after_send_mail', [$this, 'before_send_email'], 15, 3);
+        add_action('wpcf7_before_send_mail', [$this, 'before_send_email'], 15, 3);
 
 
     }
@@ -132,45 +129,72 @@ class CF7SmsExtension
 
         $props = $form->get_properties();
 
-        $from = get_option('kmcf7se_senderid');
         $visitor_number = trim(wpcf7_mail_replace_tags($options['visitor_phone']));
         $visitor_message = trim(wpcf7_mail_replace_tags($options['visitor_message']));
         $your_message = trim(wpcf7_mail_replace_tags($options['your_message']));
         $your_number = trim(wpcf7_mail_replace_tags($options['your_phone']));
-        $TWILIO_SID = get_option('kmcf7se_api_sid');
-        $TWILIO_TOKEN = get_option("kmcf7se_api_token");
 
-        try {
-            $client = new Client($TWILIO_SID, $TWILIO_TOKEN);
-            if (strlen($visitor_number) > 0) {
-                $response = $client->messages->create(
-                    $visitor_number,
-                    array(
-                        "from" => $from,
-                        "body" => $visitor_message
-                    )
-                );
-            }
-            if (strlen($your_number) > 0) {
-                $response = $client->messages->create(
-                    $your_number,
-                    array(
-                        "from" => $from,
-                        "body" => $your_message
-                    )
-                );
-            }
-        } catch (\Exception $e) {
-            //update_option('km_error', 'mail');
-            //  update_option('km_error_message', $e->getMessage());
-            // $abort = true;
+        //todo: enable debug mode
 
+        if (strlen($visitor_number) > 0) {
+            if (!$this->send_sms($visitor_number, $visitor_message)) {
+                // $abort = true;
+            }
+        }
+        if (strlen($your_number) > 0) {
+            if (!$this->send_sms($your_number, $your_message)) {
+                // $abort = true;
+            }
         }
 
 
         if ($props['mail']['recipient'] == '') {
             // $abort = true;
         }
+    }
+
+    /**
+     * @since 1.0.1
+     */
+    // todo: review naming of variables of this function
+    private function send_sms($to, $message)
+    {
+        $TWILIO_SID = get_option('kmcf7se_api_sid');
+        $TWILIO_TOKEN = get_option("kmcf7se_api_token");
+        $from = get_option('kmcf7se_senderid');
+
+        $url = "https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json";
+        $data = [
+            'Body' => $message,
+            'From' => $from,
+            'To' => $to
+        ];
+
+        $post = http_build_query($data);
+        $x = curl_init($url);
+        curl_setopt($x, CURLOPT_POST, true);
+        // curl_setopt($x, CURLOPT_FAILONERROR, true);
+        curl_setopt($x, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($x, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($x, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($x, CURLOPT_USERPWD, "$TWILIO_SID:$TWILIO_TOKEN");
+        curl_setopt($x, CURLOPT_POSTFIELDS, $post);
+        $y = curl_exec($x);
+        $httpcode = curl_getinfo($x, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($x)) {
+            update_option('km_error', 'mail');
+            update_option('km_error_message', curl_error($x));
+            return false;
+        } else if ($httpcode >= 400) {
+            update_option('km_error', 'mail');
+            update_option('km_error_message', $y);
+            return false;
+        }
+
+        curl_close($x);
+
+        return true;
     }
 
     /**

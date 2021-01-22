@@ -1,10 +1,10 @@
 === SMS Extension for Contact Form 7 ===
 Contributors: kofimokome
 Donate link: www.kofimokome.stream
-Tags: sms, contact form, contact form 7, extension
+Tags: sms, contact form, contact form 7, extension, twilio
 Requires at least: 5.4
 Tested up to: 5.6
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -32,6 +32,10 @@ We will add more providers with time.
 5. Open the contact form in which you would like to add SMS notifications. Click on the SMS tab for configurations.
 
 == Changelog ==
+
+= 1.0.1 =
+* Fix SMS not sending
+* Remove Twilio PHP SDK, Switch to Twilio API
 
 = 1.0.0 =
 * Initial Release

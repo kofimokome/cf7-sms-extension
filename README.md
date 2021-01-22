@@ -18,5 +18,9 @@ Bear in mind that the codes in the `develop` branch may be unstable. If you are 
 ## This plugin is used by
 1. **[I-Mbu](https://i-mbu.com)**
 
+## v1.0.1 Changes
+1. Fix SMS not sending bug
+2. Remove Twilio PHP SDK, Switch to Twilio API
+
 ## v1.0.0 Changes
 1. Initial Release
