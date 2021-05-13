@@ -33,6 +33,9 @@ We will add more providers with time.
 
 == Changelog ==
 
+= 1.0.2 =
+* Enhancements
+
 = 1.0.1 =
 * Fix SMS not sending
 * Remove Twilio PHP SDK, Switch to Twilio API
