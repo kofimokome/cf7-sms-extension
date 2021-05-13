@@ -8,7 +8,7 @@
 
 namespace kmcf7_sms_extension;
 
-class KmMenuPage
+class MenuPage
 {
     private $page_title;
     private $menu_title;

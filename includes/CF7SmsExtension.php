@@ -4,7 +4,6 @@
  * User: kofi
  * Date: 18/8/20
  * Time: 08:10 PM
- * Added by UnderWordPressure: [text <name> ...] filter.
  */
 
 namespace kmcf7_sms_extension;
@@ -17,7 +16,7 @@ class CF7SmsExtension
     public function __construct()
     {
         // our constructor
-        $this->version = '1.0.1';
+        $this->version = '1.0.2';
     }
 
     /**
@@ -29,6 +28,7 @@ class CF7SmsExtension
         $this->add_actions();
         $this->add_filters();
         $this->add_main_menu();
+        $this->add_settings();
         $this->set_default_properties();
     }
 
@@ -69,11 +69,47 @@ class CF7SmsExtension
     {
         // Create the menu page
 
-        $menu_page = new KmMenuPage('CF7 SMS Extension', 'CF7 SMS Extension', 'read', 'kmcf7se-sms-extension-options', 'dashicons-tickets-alt', null, array($this, 'dashboard_view'));
+        $menu_page = new MenuPage('CF7 SMS Extension', 'CF7 SMS Extension', 'read', 'kmcf7se-sms-extension-options', 'dashicons-tickets-alt', null, array($this, 'dashboard_view'));
 
-        $settings_page = new KmSubMenuPage($menu_page->get_menu_slug(), 'Options', 'Options', 'manage_options', 'kmcf7se-sms-extension-options', null, true);
-        $settings_page->add_section('kmcf7se_option');
-        $settings_page->add_field(
+        $settings_page = new SubMenuPage($menu_page->get_menu_slug(), 'Options', 'Options', 'manage_options', 'kmcf7se-sms-extension-options', array($this, 'settings_view'), true);
+        $settings_page->add_tab('settings', 'Basic Settings', array($this, 'status_tab_view'), array('tab' => 'settings'));
+        $settings_page->add_tab('plugins', 'More Plugins', array($this, 'status_tab_view'), array('tab' => 'plugins'));
+
+        $menu_page->add_sub_menu_page($settings_page);
+
+        $menu_page->run();
+
+    }
+
+    /**
+     * Displays settings page
+     * @since 1.0.2
+     */
+    public function status_tab_view($args)
+    {
+        switch ($args['tab']) {
+            case 'settings':
+                include "views/settings.php";
+                break;
+            case 'plugins':
+                include "views/plugins.php";
+                break;
+            default:
+                include "views/settings.php";
+                break;
+        }
+    }
+
+    /**
+     * Adds Settings
+     * @since 1.0.2
+     */
+    private function add_settings()
+    {
+
+        $settings = new Setting('kmcf7se-sms-extension-options');
+        $settings->add_section('kmcf7se_option');
+        $settings->add_field(
             array(
                 'type' => 'text',
                 'id' => 'kmcf7se_api_sid',
@@ -82,7 +118,7 @@ class CF7SmsExtension
                 'placeholder' => ''
             )
         );
-        $settings_page->add_field(
+        $settings->add_field(
             array(
                 'type' => 'text',
                 'id' => 'kmcf7se_api_token',
@@ -91,7 +127,7 @@ class CF7SmsExtension
                 'placeholder' => ''
             )
         );
-        $settings_page->add_field(
+        $settings->add_field(
             array(
                 'type' => 'text',
                 'id' => 'kmcf7se_senderid',
@@ -100,11 +136,7 @@ class CF7SmsExtension
                 'placeholder' => ''
             )
         );
-
-        $menu_page->add_sub_menu_page($settings_page);
-
-        $menu_page->run();
-
+        $settings->save();
     }
 
     /**

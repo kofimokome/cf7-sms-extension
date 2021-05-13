@@ -3,8 +3,8 @@ Contributors: kofimokome
 Donate link: www.kofimokome.stream
 Tags: sms, contact form, contact form 7, extension, twilio
 Requires at least: 5.4
-Tested up to: 5.6
-Stable tag: 1.0.1
+Tested up to: 5.7
+Stable tag: 1.0.2
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
