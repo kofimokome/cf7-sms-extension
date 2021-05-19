@@ -11,12 +11,13 @@ namespace kmcf7_sms_extension;
 class CF7SmsExtension
 {
     private $default_properties;
-    private $version;
+    private static $version;
+
 
     public function __construct()
     {
         // our constructor
-        $this->version = '1.0.2';
+        self::$version = '1.1.0';
     }
 
     /**
@@ -30,6 +31,15 @@ class CF7SmsExtension
         $this->add_main_menu();
         $this->add_settings();
         $this->set_default_properties();
+    }
+
+    /**
+     * Returns the version of this plugin
+     * @since 1.1.0
+     */
+    public static function get_version()
+    {
+        return self::$version;
     }
 
     /**
@@ -73,6 +83,7 @@ class CF7SmsExtension
 
         $settings_page = new SubMenuPage($menu_page->get_menu_slug(), 'Options', 'Options', 'manage_options', 'kmcf7se-sms-extension-options', array($this, 'settings_view'), true);
         $settings_page->add_tab('settings', 'Basic Settings', array($this, 'status_tab_view'), array('tab' => 'settings'));
+        $settings_page->add_tab('test', 'SMS Test', array($this, 'status_tab_view'), array('tab' => 'test'));
         $settings_page->add_tab('plugins', 'More Plugins', array($this, 'status_tab_view'), array('tab' => 'plugins'));
 
         $menu_page->add_sub_menu_page($settings_page);
@@ -83,16 +94,16 @@ class CF7SmsExtension
 
     /**
      * Displays settings page
-     * @since 1.0.2
+     * @since 1.1.0
      */
     public function status_tab_view($args)
     {
         switch ($args['tab']) {
-            case 'settings':
-                include "views/settings.php";
-                break;
             case 'plugins':
                 include "views/plugins.php";
+                break;
+            case 'test':
+                include "views/test.php";
                 break;
             default:
                 include "views/settings.php";
@@ -102,7 +113,7 @@ class CF7SmsExtension
 
     /**
      * Adds Settings
-     * @since 1.0.2
+     * @since 1.1.0
      */
     private function add_settings()
     {
@@ -133,6 +144,15 @@ class CF7SmsExtension
                 'id' => 'kmcf7se_senderid',
                 'label' => 'SenderID: ',
                 'tip' => '',
+                'placeholder' => ''
+            )
+        );
+        $settings->add_field(
+            array(
+                'type' => 'checkbox',
+                'id' => 'kmcf7se_show_errors',
+                'label' => 'Show Error Message: ',
+                'tip' => 'This will prevent the contact form from submitting if an error occurs while sending the sms',
                 'placeholder' => ''
             )
         );
@@ -189,7 +209,7 @@ class CF7SmsExtension
      * @since 1.0.1
      */
     // todo: review naming of variables of this function
-    private function send_sms($to, $message)
+    public static function send_sms($to, $message)
     {
         $TWILIO_SID = get_option('kmcf7se_api_sid');
         $TWILIO_TOKEN = get_option("kmcf7se_api_token");
@@ -235,12 +255,14 @@ class CF7SmsExtension
      */
     public function ajax_json_echo($response, $result)
     {
-        if (get_option('km_error') == 'mail') {
-            $response['status'] = 'mail_failed';
-            $response['message'] = get_option('km_error_message');
+        if (get_option('kmcf7se_show_errors') == 'on') {
+            if (get_option('km_error') == 'mail') {
+                $response['status'] = 'mail_failed';
+                $response['message'] = get_option('km_error_message');
+            }
+            delete_option('km_error');
+            delete_option('km_error_message');
         }
-        delete_option('km_error');
-        delete_option('km_error_message');
         return $response;
     }
 
