@@ -15,10 +15,7 @@ You will need to create a Twilio Account. If you don't have one, you can create 
     submit_button();
     ?>
 </form>
-<?php if (get_option('kmcf7se_version', '0') == CF7SmsExtension::get_version()): ?>
-
-    <!-- Trigger/Open The Modal -->
-    <button id="myBtn">Open Modal</button>
+<?php if (get_option('kmcf7se_version', '0') !== CF7SmsExtension::get_version()): ?>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
