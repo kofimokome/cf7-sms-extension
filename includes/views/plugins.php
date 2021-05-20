@@ -1,6 +1,6 @@
 <?php
 
-namespace kmcf7_message_filter;
+namespace kmcf7_sms_extension;
 ?>
     <h1>Here is a list of other plugins I am currently working on</h1>
 
