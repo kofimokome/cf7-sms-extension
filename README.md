@@ -18,6 +18,10 @@ Bear in mind that the codes in the `develop` branch may be unstable. If you are 
 ## This plugin is used by
 1. **[I-Mbu](https://i-mbu.com)**
 
+## v1.1.0 Changes
+1. Add option to show/hide error messages if an sms was not sent
+2. Add a page to send test SMS
+
 ## v1.0.1 Changes
 1. Fix SMS not sending bug
 2. Remove Twilio PHP SDK, Switch to Twilio API

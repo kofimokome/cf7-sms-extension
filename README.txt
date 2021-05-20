@@ -33,7 +33,9 @@ We will add more providers with time.
 
 == Changelog ==
 
-= 1.0.2 =
+= 1.1.0 =
+* Add option to show/hide error messages if an sms was not sent
+* Add page to send a test SMS
 * Enhancements
 
 = 1.0.1 =
