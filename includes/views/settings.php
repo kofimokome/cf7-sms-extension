@@ -2,20 +2,20 @@
 
 namespace kmcf7_sms_extension;
 ?>
-<h1>Twilio Account Configuration</h1>
-You will need to create a Twilio Account. If you don't have one, you can create it <a href="https://twilio.com"
-                                                                                      target="_blank">here</a>
-<?php settings_errors(); ?>
-<form method="post" action="options.php" id="basic_settings_form">
-    <?php
+    <h1>Twilio Account Configuration</h1>
+    You will need to create a Twilio Account. If you don't have one, you can create it <a href="https://twilio.com"
+                                                                                          target="_blank">here</a>
+    <?php settings_errors(); ?>
+    <form method="post" action="options.php" id="basic_settings_form">
+        <?php
 
-    settings_fields('kmcf7se_option');
-    do_settings_sections('kmcf7se-sms-extension-options');
+        settings_fields('kmcf7se_option');
+        do_settings_sections('kmcf7se-sms-extension-options');
 
-    submit_button();
-    ?>
-</form>
-<?php if (get_option('kmcf7se_version', '0') !== CF7SmsExtension::get_version()): ?>
+        submit_button();
+        ?>
+    </form>
+    <?php if (get_option('kmcf7se_version', '0') !== CF7SmsExtension::get_version()): ?>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -107,5 +107,6 @@ You will need to create a Twilio Account. If you don't have one, you can create 
         }
     </script>
     <?php update_option('kmcf7se_version', CF7SmsExtension::get_version());
-endif; ?>
+endif;
 // $settings->run();
+?>

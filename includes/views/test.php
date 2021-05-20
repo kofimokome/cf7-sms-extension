@@ -15,7 +15,7 @@ namespace kmcf7_sms_extension;
 
     <?php
 if (isset($_POST['smsto'])) {
-    if (!CF7SmsExtension::send_sms($_POST['smsto'], 'This is a test message from CF7 SMS Extension Plugin')) {
+    if (!CF7SmsExtension::send_sms($_POST['smsto'], 'This is a test message from Contact Form 7 SMS Extension Plugin')) {
         ?>
         <div style="border:solid red 2px; width: 400px; padding:7px 10px;margin-top:10px;">
             <h3>Your message was not sent !!! </h3>
@@ -23,15 +23,15 @@ if (isset($_POST['smsto'])) {
             <table>
                 <tr>
                     <td><b>Error Code:</b></td>
-                    <td><?php echo $error->code ?></td>
+                    <td><?php echo $error->code ?? '' ?></td>
                 </tr>
                 <tr>
                     <td><b>Message:</b></td>
-                    <td><?php echo $error->message ?> </td>
+                    <td><?php echo $error->message ?? get_option('km_error_message') ?> </td>
                 </tr>
                 <tr>
                     <td><b>More Info:</b></td>
-                    <td><?php echo $error->more_info ?></td>
+                    <td><?php echo $error->more_info ?? '' ?></td>
                 </tr>
             </table>
         </div>

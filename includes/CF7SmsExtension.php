@@ -258,7 +258,8 @@ class CF7SmsExtension
         if (get_option('kmcf7se_show_errors') == 'on') {
             if (get_option('km_error') == 'mail') {
                 $response['status'] = 'mail_failed';
-                $response['message'] = get_option('km_error_message');
+                $error = json_decode(get_option('km_error_message'));
+                $response['message'] = $error->message ?? get_option('km_error_message');
             }
             delete_option('km_error');
             delete_option('km_error_message');
