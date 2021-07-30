@@ -17,7 +17,7 @@ class CF7SmsExtension
     public function __construct()
     {
         // our constructor
-        self::$version = '1.1.0';
+        self::$version = '1.2.0';
     }
 
     /**
