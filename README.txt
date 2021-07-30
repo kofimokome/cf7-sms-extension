@@ -33,6 +33,11 @@ We will add more providers with time.
 
 == Changelog ==
 
+= 1.2.0 =
+* Add page to test your configurations
+* Add option to prevent form from submitting if an error occurs while sending sms or skip error and
+  submit the form
+
 = 1.1.0 =
 * Add option to show/hide error messages if an sms was not sent
 * Add page to send a test SMS
