@@ -1,9 +1,9 @@
 === SMS Extension for Contact Form 7 ===
 Contributors: kofimokome
-Donate link: www.kofimokome.stream
+Donate link: https://ko-fi.com/kofimokome
 Tags: sms, contact form, contact form 7, extension, twilio
 Requires at least: 5.4
-Tested up to: 5.8
+Tested up to: 6.0
 Stable tag: 1.2.0
 Requires PHP: 7.2
 License: GPLv2 or later
