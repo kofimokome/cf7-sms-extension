@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/kofimokome
 Tags: sms, contact form, contact form 7, extension, twilio
 Requires at least: 5.4
 Tested up to: 6.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -32,6 +32,9 @@ We will add more providers with time.
 5. Open the contact form in which you would like to add SMS notifications. Click on the SMS tab for configurations.
 
 == Changelog ==
+
+= 1.2.1 =
+* Add ability to send SMS to more than one admin number
 
 = 1.2.0 =
 * Add page to test your configurations

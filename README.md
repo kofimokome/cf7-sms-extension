@@ -18,6 +18,9 @@ Bear in mind that the codes in the `develop` branch may be unstable. If you are 
 ## This plugin is used by
 1. **[I-Mbu](https://i-mbu.com)**
 
+## v1.2.1 Changes
+1. Add ability to send SMS to more than one admin number
+
 ## v1.2.0 Changes
 1. Add page to test your configurations
 2. Add option to prevent form from submitting if an error occurs while sending sms or skip error and
