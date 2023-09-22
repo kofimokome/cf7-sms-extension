@@ -1,0 +1,43 @@
+# Copyright (C) 2023 SMS Extension For Contact Form 7
+# This file is distributed under the same license as the SMS Extension For Contact Form 7 package.
+msgid ""
+msgstr ""
+"Project-Id-Version: SMS Extension For Contact Form 7\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2023-09-08 05:47+0000\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../cf7-sms-extension.php:100, ../cf7-sms-extension.php:119
+msgid "Error locating <b>%s</b> for inclusion"
+msgstr ""
+
+#: ../core/CF7SmsExtension.php:204
+msgid "Thank you for your message. We will get back to you as soon as possible."
+msgstr ""
+
+#: ../core/CF7SmsExtension.php:206
+msgid "A contact form submission has been made."
+msgstr ""
+
+#: ../core/CF7SmsExtension.php:489, ../core/CF7SmsExtension.php:514
+msgid "SMS Settings"
+msgstr ""
+
+#: ../core/CF7SmsExtension.php:519
+msgid "Text To Send  ( Auto reply, Visitor SMS )"
+msgstr ""
+
+#: ../core/CF7SmsExtension.php:535
+msgid "Text To Receive ( From Form , Your SMS )"
+msgstr ""
+
+#: ../views/settings.php:11
+msgid "Account Configuration"
+msgstr ""
