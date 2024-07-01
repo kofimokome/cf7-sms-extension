@@ -1,0 +1,48 @@
+# Translation of Plugins - SMS Extension for Contact Form 7 - Development (trunk) in French (France)
+# This file is distributed under the same license as the Plugins - SMS Extension for Contact Form 7 - Development (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2023-06-12 12:11:33+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/4.0.0-alpha.7\n"
+"Language: fr\n"
+"Project-Id-Version: Plugins - SMS Extension for Contact Form 7 - Development (trunk)\n"
+
+#: includes/CF7SmsExtension.php:366
+msgid "Text To Receive ( From Form , Your SMS )"
+msgstr "Texte à recevoir ( du formulaire ,votre SMS )"
+
+#: includes/CF7SmsExtension.php:350
+msgid "Text To Send  ( Auto reply, Visitor SMS )"
+msgstr "Texte à envoyer (réponse automatique, SMS visiteur)"
+
+#: includes/CF7SmsExtension.php:320 includes/CF7SmsExtension.php:345
+msgid "SMS Settings"
+msgstr "Réglages SMS"
+
+#: cf7-sms-extension.php:54
+msgid "Error locating <b>%s</b> for inclusion"
+msgstr "Erreur de localisation de <b>%s</b> pour l’inclusion"
+
+#. Author URI of the plugin
+msgid "www.kofimokome.stream"
+msgstr "www.kofimokome.stream"
+
+#. Author of the plugin
+msgid "Kofi Mokome"
+msgstr "Kofi Mokome"
+
+#. Description of the plugin
+msgid "Receive text message notifications when a form is submitted."
+msgstr "Recevez des notifications par SMS lorsqu’un formulaire est envoyé."
+
+#. Plugin URI of the plugin
+msgid "https://github.com/kofimokome/cf7-sms-extension"
+msgstr "https://github.com/kofimokome/cf7-sms-extension"
+
+#. Plugin Name of the plugin
+msgid "SMS Extension for Contact Form 7"
+msgstr "SMS Extension for Contact Form 7"
