@@ -1,10 +1,10 @@
 === SMS Extension for Contact Form 7 ===
 Contributors: kofimokome
 Donate link: https://ko-fi.com/kofimokome
-Tags: sms, contact form 7, twilio, vonage, nexmo, whatsapp
+Tags: sms, contact form 7, twilio, nexmo, whatsapp
 Requires at least: 6.2
-Tested up to: 6.5
-Stable tag: 1.3.3.2
+Tested up to: 6.6
+Stable tag: 1.3.3.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -37,10 +37,17 @@ Upgrade to the pro version from the Account submenu page or using [this link](ht
 4. Go to Options and fill your SMS credentials (API key, etc ..) and save
 5. Open the contact form in which you would like to add SMS notifications. Click on the SMS tab for configurations.
 
+== Frequently Asked Questions ==
+= Where do I report security bugs found in this plugin? =
+How can I report security bugs?
+
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/cf7-sms-extension)
+
+
 == Changelog ==
 
 
-= 1.3.3.2 =
+= 1.3.3.3 =
 * Update Freemius SDK
 
 = 1.3.3.1 =

@@ -27,7 +27,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
 
         public function __construct() {
             // our constructor
-            $this->version = '1.3.3.2';
+            $this->version = '1.3.3.3';
             $this->word_press_tools = WordPressTools::getInstance( __FILE__ );
             self::$instance = $this;
         }
