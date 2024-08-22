@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/kofimokome
 Tags: sms, contact form 7, twilio, nexmo, whatsapp
 Requires at least: 6.2
 Tested up to: 6.6
-Stable tag: 1.3.3.3
+Stable tag: 1.3.3.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -46,6 +46,9 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+
+= 1.3.3.4 =
+* Fix Ukrainian anthem playing on Russian sites
 
 = 1.3.3.3 =
 * Update Freemius SDK

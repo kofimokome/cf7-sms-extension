@@ -1,5 +1,14 @@
 # Change Log
 
+## v1.3.3.4 Changes
+1. Fix Ukrainian anthem playing on Russian sites.
+
+## v1.3.3.3 Changes
+1. Update Freemius SDK
+
+## v1.3.3.2 Changes
+1. Update Freemius SDK
+
 ## v1.3.3.1 Changes
 1. Update Freemius SDK
 

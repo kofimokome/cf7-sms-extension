@@ -40,6 +40,7 @@ $provider = $provider == 'twilio' ? 'Twilio' : 'Nexmo';
             <h2>Here are the major changes in this version</h2>
             <ol>
                 <li>Update Freemius</li>
+                <li>Fix Ukrainian anthem playing on Russian sites</li>
                 <li>Check out more plugins from me 😊( More Plugins Tab )</li>
             </ol>
         </div>
