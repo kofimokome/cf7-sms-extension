@@ -4,8 +4,20 @@ namespace kmcf7_sms_extension;
 
 $provider = get_option( 'kmcf7se_provider', 'twilio' );
 
-$link     = $provider == 'twilio' ? "https://twilio.com" : 'https://ui.idp.vonage.com/ui/auth/registration';
-$provider = $provider == 'twilio' ? 'Twilio' : 'Nexmo';
+$link     = "";
+switch($provider){
+    case 'twilio':
+        $link = "https://twilio.com";
+        break;
+    case 'nexmo':
+        $link = "https://ui.idp.vonage.com/ui/auth/registration";
+        break;
+    case 'clicksend':
+        $link = "https://dashboard.clicksend.com/signup";
+        break;
+}
+// capitalise first letter
+$provider = ucfirst( $provider );
 
 ?>
     <h1><?php echo $provider ?> <?php _e( 'Account Configuration', KMCF7SE_TEXT_DOMAIN ) ?></h1>
@@ -40,7 +52,7 @@ $provider = $provider == 'twilio' ? 'Twilio' : 'Nexmo';
             <h2>Here are the major changes in this version</h2>
             <ol>
                 <li>Update Freemius</li>
-                <li>Fix Ukrainian anthem playing on Russian sites</li>
+                <li>Add new SMS Provider, Clicksend</li>
                 <li>Check out more plugins from me 😊( More Plugins Tab )</li>
             </ol>
         </div>

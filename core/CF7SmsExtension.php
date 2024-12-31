@@ -27,7 +27,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
 
         public function __construct() {
             // our constructor
-            $this->version = '1.3.3.4';
+            $this->version = '1.3.4';
             $this->word_press_tools = WordPressTools::getInstance( __FILE__ );
             self::$instance = $this;
         }
@@ -171,6 +171,45 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             $menu_page->run();
         }
 
+        private function getSenderIdFieldName( $provider ) {
+            switch ( $provider ) {
+                case 'twilio':
+                    return 'Sender ID ';
+                case 'nexmo':
+                    return 'Sender Name:  ';
+                case 'clicksend':
+                    return 'Sender ID (optional) ';
+                default:
+                    return 'Sender ID ';
+            }
+        }
+
+        private function getAppIdFieldName( $provider ) {
+            switch ( $provider ) {
+                case 'twilio':
+                    return 'Account SID ';
+                case 'nexmo':
+                    return 'API Key ';
+                case 'clicksend':
+                    return 'Username ';
+                default:
+                    return 'Sender ID';
+            }
+        }
+
+        private function getTokenFieldName( $provider ) {
+            switch ( $provider ) {
+                case 'twilio':
+                    return 'Auth Token ';
+                case 'nexmo':
+                    return 'API Secret ';
+                case 'clicksend':
+                    return 'API Key ';
+                default:
+                    return 'Token ';
+            }
+        }
+
         /**
          * Adds Settings
          * @since 1.1.0
@@ -187,29 +226,30 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                 'tip'            => 'Save changes to change the names of the fields below.',
                 'placeholder'    => '',
                 'options'        => [
-                    'twilio' => 'Twilio',
-                    'nexmo'  => 'Nexmo',
+                    'twilio'    => 'Twilio',
+                    'nexmo'     => 'Nexmo',
+                    'clicksend' => 'ClickSend',
                 ],
                 'default_option' => 'nexmo',
             ) );
             $settings->add_field( array(
                 'type'        => 'text',
                 'id'          => 'kmcf7se_api_sid',
-                'label'       => ( $is_provider_twilio ? 'API SID: ' : 'API Key: ' ),
+                'label'       => $this->getAppIdFieldName( $provider ),
                 'tip'         => '',
                 'placeholder' => '',
             ) );
             $settings->add_field( array(
                 'type'        => 'text',
                 'id'          => 'kmcf7se_api_token',
-                'label'       => ( $is_provider_twilio ? 'API Token: ' : 'API Secret: ' ),
+                'label'       => $this->getTokenFieldName( $provider ),
                 'tip'         => '',
                 'placeholder' => '',
             ) );
             $settings->add_field( array(
                 'type'        => 'text',
                 'id'          => 'kmcf7se_senderid',
-                'label'       => ( $is_provider_twilio ? 'SenderID: ' : 'Sender Name: ' ),
+                'label'       => $this->getSenderIdFieldName( $provider ),
                 'tip'         => '',
                 'placeholder' => '',
             ) );
@@ -217,7 +257,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                 'type'        => 'checkbox',
                 'id'          => 'kmcf7se_show_errors',
                 'label'       => 'Show Error Message: ',
-                'tip'         => 'This will prevent the contact form from submitting if an error occurs while sending the sms to your client',
+                'tip'         => __( 'This will prevent the contact form from submitting if an error occurs while sending the sms to your client', KMCF7SE_TEXT_DOMAIN ),
                 'placeholder' => '',
             ) );
             $settings->add_field( array(
@@ -443,6 +483,14 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                         $log_message
                     );
                     break;
+                case 'clicksend':
+                    return $this->sendClickSendSMS(
+                        $to,
+                        $message,
+                        $skip_error,
+                        $log_message
+                    );
+                    break;
                 default:
                     return $this->sendTwilioSMS(
                         $to,
@@ -470,32 +518,34 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                 'from'       => $from,
                 'to'         => $to,
             ];
-            $post = http_build_query( $data );
-            $x = curl_init( $url );
-            curl_setopt( $x, CURLOPT_POST, true );
-            curl_setopt( $x, CURLOPT_FAILONERROR, true );
-            curl_setopt( $x, CURLOPT_RETURNTRANSFER, true );
-            curl_setopt( $x, CURLOPT_SSL_VERIFYPEER, false );
-            curl_setopt( $x, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
-            curl_setopt( $x, CURLOPT_POSTFIELDS, $post );
-            $y = curl_exec( $x );
-            $httpcode = curl_getinfo( $x, CURLINFO_HTTP_CODE );
-            if ( curl_errno( $x ) ) {
+            // -------
+            add_filter(
+                'https_ssl_verify',
+                function ( $ssl_verify, $url_to_call ) use($url) {
+                    return ( $url == $url_to_call ? false : $ssl_verify );
+                },
+                10,
+                2
+            );
+            $response = wp_remote_request( $url, [
+                'method' => 'POST',
+                'body'   => $data,
+            ] );
+            if ( is_wp_error( $response ) ) {
                 if ( !$skip_error ) {
                     update_option( 'km_error', 'mail' );
-                    update_option( 'km_error_message', curl_error( $x ) );
+                    update_option( 'km_error_message', $response->get_error_message() );
                 }
                 return false;
-            } else {
-                if ( $httpcode >= 400 ) {
-                    if ( !$skip_error ) {
-                        update_option( 'km_error', 'mail' );
-                        update_option( 'km_error_message', $y );
-                    }
-                    return false;
-                }
             }
-            curl_close( $x );
+            $messages = json_decode( $response['body'], true )['messages'];
+            if ( $messages[0]['status'] != 0 ) {
+                if ( !$skip_error ) {
+                    update_option( 'km_error', 'mail' );
+                    update_option( 'km_error_message', $messages[0]['error-text'] );
+                }
+                return false;
+            }
             return true;
         }
 
@@ -529,44 +579,42 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                     }, $params ),
                 ]];
             }
-            $endpoint = "https://graph.facebook.com/v17.0/{$number}/messages";
-            $params = [
+            $url = "https://graph.facebook.com/v17.0/{$number}/messages";
+            $data = [
                 'messaging_product' => 'whatsapp',
                 'to'                => $to,
                 'type'              => 'template',
                 'access_token'      => $key,
-                'template'          => json_encode( $template ),
+                'template'          => wp_json_encode( $template ),
             ];
             $headers = [
                 'Authorization' => $key,
                 'Content-Type'  => 'application/json',
             ];
-            $x = curl_init();
-            curl_setopt( $x, CURLOPT_URL, $endpoint );
-            curl_setopt( $x, CURLOPT_POST, true );
-            //			curl_setopt( $x, CURLOPT_FAILONERROR, true );
-            curl_setopt( $x, CURLOPT_HTTPHEADER, $headers );
-            curl_setopt( $x, CURLOPT_RETURNTRANSFER, true );
-            curl_setopt( $x, CURLOPT_SSL_VERIFYPEER, false );
-            curl_setopt( $x, CURLOPT_POSTFIELDS, $params );
-            $y = curl_exec( $x );
-            $httpcode = curl_getinfo( $x, CURLINFO_HTTP_CODE );
-            if ( curl_errno( $x ) ) {
+            //---
+            $response = wp_remote_request( $url, [
+                'method'  => 'POST',
+                'headers' => $headers,
+                'body'    => $data,
+            ] );
+            if ( is_wp_error( $response ) ) {
                 if ( !$skip_error ) {
                     update_option( 'km_error', 'mail' );
-                    update_option( 'km_error_message', curl_error( $x ) );
+                    update_option( 'km_error_message', $response->get_error_message() );
                 }
                 return false;
             } else {
-                if ( $httpcode >= 400 ) {
+                $http_code = $response['response']['code'] ?? 400;
+                $body = $response['body'];
+                if ( $http_code >= 400 ) {
                     if ( !$skip_error ) {
                         update_option( 'km_error', 'mail' );
-                        update_option( 'km_error_message', $y );
+                        update_option( 'km_error_message', $body ?? $response['response']['message'] );
                     }
                     return false;
                 }
             }
-            curl_close( $x );
+            //---
             return true;
         }
 
@@ -585,33 +633,77 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                 'From' => $from,
                 'To'   => $to,
             ];
-            $post = http_build_query( $data );
-            $x = curl_init( $url );
-            curl_setopt( $x, CURLOPT_POST, true );
-            //		 curl_setopt($x, CURLOPT_FAILONERROR, true);
-            curl_setopt( $x, CURLOPT_RETURNTRANSFER, true );
-            curl_setopt( $x, CURLOPT_SSL_VERIFYPEER, false );
-            curl_setopt( $x, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
-            curl_setopt( $x, CURLOPT_USERPWD, "{$TWILIO_SID}:{$TWILIO_TOKEN}" );
-            curl_setopt( $x, CURLOPT_POSTFIELDS, $post );
-            $y = curl_exec( $x );
-            $httpcode = curl_getinfo( $x, CURLINFO_HTTP_CODE );
-            if ( curl_errno( $x ) ) {
+            $headers = [
+                'Authorization' => 'Basic ' . base64_encode( "{$TWILIO_SID}:{$TWILIO_TOKEN}" ),
+                'Content-Type'  => 'application/x-www-form-urlencoded',
+            ];
+            $response = wp_remote_request( $url, [
+                'method'  => 'POST',
+                'headers' => $headers,
+                'body'    => $data,
+            ] );
+            if ( is_wp_error( $response ) ) {
                 if ( !$skip_error ) {
                     update_option( 'km_error', 'mail' );
-                    update_option( 'km_error_message', curl_error( $x ) );
+                    update_option( 'km_error_message', $response->get_error_message() );
                 }
                 return false;
             } else {
-                if ( $httpcode >= 400 ) {
+                $http_code = $response['response']['code'] ?? 400;
+                $body = $response['body'];
+                if ( $http_code >= 400 ) {
                     if ( !$skip_error ) {
                         update_option( 'km_error', 'mail' );
-                        update_option( 'km_error_message', $y );
+                        update_option( 'km_error_message', $body ?? $response['response']['message'] );
                     }
                     return false;
                 }
             }
-            curl_close( $x );
+            return true;
+        }
+
+        private function sendClickSendSMS(
+            $to,
+            $message,
+            $skip_error = false,
+            bool $log_message = true
+        ) {
+            $username = get_option( 'kmcf7se_api_sid' );
+            $password = get_option( "kmcf7se_api_token" );
+            $from = get_option( 'kmcf7se_senderid' );
+            $url = "https://rest.clicksend.com/v3/sms/send";
+            $data = [
+                'messages' => [[
+                    'body' => $message,
+                    'to'   => $to,
+                ]],
+            ];
+            $headers = [
+                'Authorization' => 'Basic ' . base64_encode( "{$username}:{$password}" ),
+                'Content-Type'  => 'application/json',
+            ];
+            $response = wp_remote_request( $url, [
+                'method'  => 'POST',
+                'headers' => $headers,
+                'body'    => wp_json_encode( $data ),
+            ] );
+            if ( is_wp_error( $response ) ) {
+                if ( !$skip_error ) {
+                    update_option( 'km_error', 'mail' );
+                    update_option( 'km_error_message', $response->get_error_message() );
+                }
+                return false;
+            } else {
+                $http_code = $response['response']['code'] ?? 400;
+                $body = $response['body'];
+                if ( $http_code >= 400 ) {
+                    if ( !$skip_error ) {
+                        update_option( 'km_error', 'mail' );
+                        update_option( 'km_error_message', $body ?? $response['response']['message'] );
+                    }
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -640,14 +732,21 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             $options_name = 'kmcf7se-tab-settings-' . $form->id();
             if ( isset( $_POST[$options_name] ) ) {
                 $options = get_option( $options_name );
-                $options['your_phone'] = trim( sanitize_text_field( $_POST[$options_name]['your-phone'] ) );
-                $options['visitor_message'] = trim( sanitize_textarea_field( $_POST[$options_name]['visitor-message'] ) );
-                $options['visitor_phone'] = trim( sanitize_text_field( $_POST[$options_name]['visitor-phone'] ) );
-                $options['your_message'] = trim( sanitize_textarea_field( $_POST[$options_name]['your-message'] ) );
-                $options['visitor_whatsapp_phone'] = trim( sanitize_text_field( $_POST[$options_name]['visitor-whatsapp-phone'] ) );
-                $options['visitor_whatsapp_template'] = trim( sanitize_text_field( $_POST[$options_name]['visitor-whatsapp-template'] ) );
-                $options['your_whatsapp_phone'] = trim( sanitize_text_field( $_POST[$options_name]['your-whatsapp-phone'] ) );
-                $options['your_whatsapp_template'] = trim( sanitize_text_field( $_POST[$options_name]['your-whatsapp-template'] ) );
+                $options_to_add = [
+                    'your-phone',
+                    'visitor-message',
+                    'visitor-phone',
+                    'your-message',
+                    'visitor-whatsapp-phone',
+                    'visitor-whatsapp-template',
+                    'your-whatsapp-phone',
+                    'your-whatsapp-template'
+                ];
+                foreach ( $options_to_add as $option_to_add ) {
+                    if ( isset( $_POST[$options_name][$option_to_add] ) ) {
+                        $options[str_replace( '-', '_', $option_to_add )] = trim( sanitize_text_field( wp_unslash( $_POST[$options_name][$option_to_add] ) ) );
+                    }
+                }
                 update_option( $options_name, $options );
             }
         }

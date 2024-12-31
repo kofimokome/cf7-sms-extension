@@ -9,7 +9,7 @@
  * Plugin Name: SMS Extension for Contact Form 7
  * Plugin URI: https://github.com/kofimokome/cf7-sms-extension
  * Description: Receive text message notifications when a form is submitted.
- * Version: 1.3.3.4
+ * Version: 1.3.4
  * Author: Kofi Mokome
  * Author URI: www.kofimokome.stream
  * License: GPL-2.0+
@@ -142,8 +142,7 @@ if ( function_exists( 'kmcf7_sms_extension\\kmcf7se_fs' ) ) {
     function KMCF7SEUninstall() {
         global $wpdb;
         //query the wp options table and delete all options that start with kmcfmf_
-        $query = $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'kmcf7se_%'" );
-        $wpdb->query( $query );
+        $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'kmcf7se_%'" ) );
         if ( get_option( 'kmcf7se_message_delete_data', 'off' ) == 'on' ) {
         }
         // set options to remove here

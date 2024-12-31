@@ -1,11 +1,11 @@
 === SMS Extension for Contact Form 7 ===
-Contributors: kofimokome
+Contributors: kofimokome, freemius
 Donate link: https://ko-fi.com/kofimokome
 Tags: sms, contact form 7, twilio, nexmo, whatsapp
 Requires at least: 6.2
-Tested up to: 6.6
-Stable tag: 1.3.3.4
-Requires PHP: 7.4
+Tested up to: 6.7
+Stable tag: 1.3.4
+Requires PHP: 8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,7 @@ Note: This is just an extension. This plugin is not affiliated with or endorsed 
 1. Twilio
 2. Nexmo
 3. WhatsApp
+4. ClickSend
 We will add more providers with time.
 
 == Pro Features ==
@@ -46,6 +47,9 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+= 1.3.4 =
+* Add new SMS Provider, ClickSend
+* Update Freemius SDK
 
 = 1.3.3.4 =
 * Fix Ukrainian anthem playing on Russian sites
