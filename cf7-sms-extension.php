@@ -9,19 +9,19 @@
  * Plugin Name: SMS Extension for Contact Form 7
  * Plugin URI: https://github.com/kofimokome/cf7-sms-extension
  * Description: Receive text message notifications when a form is submitted.
- * Version: 1.3.4
+ * Version: 1.3.5
  * Author: Kofi Mokome
  * Author URI: www.kofimokome.stream
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: cf7-sms-extension
  * Domain Path: /languages
- *
+ * Requires PHP: 8.0
  */
 namespace kmcf7_sms_extension;
 
 use KMEnv;
-use WordPressTools;
+use WPTools;
 defined( 'ABSPATH' ) or die( 'Giving To Cesar What Belongs To Caesar' );
 if ( !defined( 'KMCF7SE_TEXT_DOMAIN' ) ) {
     define( 'KMCF7SE_TEXT_DOMAIN', 'cf7-sms-extension' );
@@ -125,7 +125,7 @@ if ( function_exists( 'kmcf7_sms_extension\\kmcf7se_fs' ) ) {
     }
 
     function KMCF7SEStart() {
-        $wordpress_tools = new WordPressTools(__FILE__);
+        $wordpress_tools = new WPTools(__FILE__);
         $message_extension = new CF7SmsExtension();
         $message_extension->run();
     }

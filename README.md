@@ -16,6 +16,11 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 ## Supported Providers
 1. Twilio
 2. Nexmo (Vonage)
+3. WhatsApp
+4. ClickSend
+5. MessageBird
+6. TextLocal
+7. Telnyx
 
 ## Contribution
 The latest codes are found in the `develop` branch. If you would like to contribute, you should use the `develop` branch.

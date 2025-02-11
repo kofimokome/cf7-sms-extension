@@ -1,9 +1,9 @@
 <?php
 
 namespace kmcf7_sms_extension;
-use WordPressTools;
+use WPTools;
 
-$instance = WordPressTools::getInstance( __FILE__ );
+$instance = WPTools::getInstance( __FILE__ );
 $dir = $instance->getPluginURL().'/assets/images';
 ?>
 <h1><?php _e( "How to Upgrade", KMCF7SE_TEXT_DOMAIN ) ?></h1>

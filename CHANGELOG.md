@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.3.5 Changes
+
+1. Add new SMS Providers: Clicksend, MessageBird, TextLocal, Telnyx
+2. Security Fixes
+3. Update Freemius
+
 ## v1.3.4 Changes
 
 1. Add new SMS Provider, ClickSend
@@ -28,16 +34,16 @@
 ## v1.3.2.1 Changes
 
 1. Update Freemius SDK
-2. Update WordPressTools library
+2. Update WPTools library
 
 ## v1.3.2 Changes
 
 1. Add WhatsApp message feature
-2. Update WordPressTools library
+2. Update WPTools library
 
 ## v1.3.1 Changes
 
-1. Update WordPressTools library
+1. Update WPTools library
 
 ## v1.3.0 Changes
 

@@ -12,7 +12,7 @@ use KMMenuPage;
 use KMSetting;
 use KMSubMenuPage;
 use KMValidator;
-use WordPressTools;
+use WPTools;
 if ( !class_exists( 'CF7SmsExtension' ) ) {
     class CF7SmsExtension {
         private static $instance;
@@ -27,8 +27,8 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
 
         public function __construct() {
             // our constructor
-            $this->version = '1.3.4';
-            $this->word_press_tools = WordPressTools::getInstance( __FILE__ );
+            $this->version = '1.3.5';
+            $this->word_press_tools = WPTools::getInstance( __FILE__ );
             self::$instance = $this;
         }
 
@@ -127,7 +127,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             );
             $settings_page->add_tab(
                 'whatsapp',
-                __( 'WhatsApp Settings (beta)', KMCF7SE_TEXT_DOMAIN ),
+                __( 'WhatsApp Settings', KMCF7SE_TEXT_DOMAIN ),
                 array($this, 'statusTabView'),
                 array(
                     'tab' => 'whatsapp',
@@ -175,12 +175,16 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             switch ( $provider ) {
                 case 'twilio':
                     return 'Sender ID ';
-                case 'nexmo':
-                    return 'Sender Name:  ';
+                case 'messagebird':
+                    return 'Originator:  ';
                 case 'clicksend':
                     return 'Sender ID (optional) ';
+                case 'textlocal':
+                    return 'Sender ';
+                case 'telnyx':
+                    return "From ";
                 default:
-                    return 'Sender ID ';
+                    return 'Sender Name:  ';
             }
         }
 
@@ -188,12 +192,12 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             switch ( $provider ) {
                 case 'twilio':
                     return 'Account SID ';
-                case 'nexmo':
+                case 'messagebird':
                     return 'API Key ';
                 case 'clicksend':
                     return 'Username ';
                 default:
-                    return 'Sender ID';
+                    return 'API Key ';
             }
         }
 
@@ -201,12 +205,34 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             switch ( $provider ) {
                 case 'twilio':
                     return 'Auth Token ';
-                case 'nexmo':
+                case 'messagebird':
                     return 'API Secret ';
                 case 'clicksend':
                     return 'API Key ';
                 default:
-                    return 'Token ';
+                    return 'API Secret ';
+            }
+        }
+
+        private function hideSenderIDField( $provider ) {
+            switch ( $provider ) {
+                case 'clicksend':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private function hideTokenField( $provider ) {
+            switch ( $provider ) {
+                case 'messagebird':
+                    return true;
+                case 'textlocal':
+                    return true;
+                case 'telnyx':
+                    return true;
+                default:
+                    return false;
             }
         }
 
@@ -226,33 +252,40 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                 'tip'            => 'Save changes to change the names of the fields below.',
                 'placeholder'    => '',
                 'options'        => [
-                    'twilio'    => 'Twilio',
-                    'nexmo'     => 'Nexmo',
-                    'clicksend' => 'ClickSend',
+                    'nexmo'       => 'Nexmo',
+                    'twilio'      => 'Twilio',
+                    'clicksend'   => 'ClickSend',
+                    'messagebird' => 'MessageBird',
+                    'textlocal'   => 'TextLocal',
+                    'telnyx'      => 'Telnyx',
                 ],
                 'default_option' => 'nexmo',
             ) );
             $settings->add_field( array(
-                'type'        => 'text',
+                'type'        => 'textarea',
                 'id'          => 'kmcf7se_api_sid',
                 'label'       => $this->getAppIdFieldName( $provider ),
                 'tip'         => '',
                 'placeholder' => '',
             ) );
-            $settings->add_field( array(
-                'type'        => 'text',
-                'id'          => 'kmcf7se_api_token',
-                'label'       => $this->getTokenFieldName( $provider ),
-                'tip'         => '',
-                'placeholder' => '',
-            ) );
-            $settings->add_field( array(
-                'type'        => 'text',
-                'id'          => 'kmcf7se_senderid',
-                'label'       => $this->getSenderIdFieldName( $provider ),
-                'tip'         => '',
-                'placeholder' => '',
-            ) );
+            if ( !$this->hideTokenField( $provider ) ) {
+                $settings->add_field( array(
+                    'type'        => 'textarea',
+                    'id'          => 'kmcf7se_api_token',
+                    'label'       => $this->getTokenFieldName( $provider ),
+                    'tip'         => '',
+                    'placeholder' => '',
+                ) );
+            }
+            if ( !$this->hideSenderIDField( $provider ) ) {
+                $settings->add_field( array(
+                    'type'        => 'text',
+                    'id'          => 'kmcf7se_senderid',
+                    'label'       => $this->getSenderIdFieldName( $provider ),
+                    'tip'         => '',
+                    'placeholder' => '',
+                ) );
+            }
             $settings->add_field( array(
                 'type'        => 'checkbox',
                 'id'          => 'kmcf7se_show_errors',
@@ -378,7 +411,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                     break;
                 case 'history':
                     if ( kmcf7se_fs()->is_free_plan() || kmcf7se_fs()->can_use_premium_code() && !kmcf7se_fs()->is_premium() ) {
-                        $instance = WordPressTools::getInstance( __FILE__ );
+                        $instance = WPTools::getInstance( __FILE__ );
                         $dir = $instance->getPluginURL() . '/assets/images';
                         $text = "<div style='margin-top:20px'><strong>" . __( "This feature is available only in the premium version", KMCF7SE_TEXT_DOMAIN ) . "</strong></div>";
                         if ( !kmcf7se_fs()->is_trial() ) {
@@ -473,10 +506,10 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             bool $skip_error = false,
             bool $log_message = true
         ) : bool {
-            $provider = get_option( 'kmcf7se_provider', 'twilio' );
+            $provider = get_option( 'kmcf7se_provider', 'nexmo' );
             switch ( $provider ) {
-                case 'nexmo':
-                    return $this->sendNexmoSMS(
+                case 'twilio':
+                    return $this->sendTwilioSMS(
                         $to,
                         $message,
                         $skip_error,
@@ -490,9 +523,30 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                         $skip_error,
                         $log_message
                     );
+                case 'messagebird':
+                    return $this->sendMessageBirdSMS(
+                        $to,
+                        $message,
+                        $skip_error,
+                        $log_message
+                    );
+                case 'telnyx':
+                    return $this->sendTelnyxSMS(
+                        $to,
+                        $message,
+                        $skip_error,
+                        $log_message
+                    );
+                case 'textlocal':
+                    return $this->sendTextLocalSMS(
+                        $to,
+                        $message,
+                        $skip_error,
+                        $log_message
+                    );
                     break;
                 default:
-                    return $this->sendTwilioSMS(
+                    return $this->sendNexmoSMS(
                         $to,
                         $message,
                         $skip_error,
@@ -615,6 +669,133 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                 }
             }
             //---
+            return true;
+        }
+
+        private function sendMessageBirdSMS(
+            $to,
+            $message,
+            $skip_error = false,
+            bool $log_message = true
+        ) {
+            $access_key = get_option( 'kmcf7se_api_sid' );
+            $originator = get_option( 'kmcf7se_senderid' );
+            $url = "https://rest.messagebird.com/messages";
+            $data = [
+                'body'       => $message,
+                'originator' => $originator,
+                'recipients' => [$to],
+            ];
+            $headers = [
+                'Authorization' => 'AccessKey  ' . $access_key,
+                'Content-Type'  => 'application/json',
+            ];
+            $response = wp_remote_request( $url, [
+                'method'  => 'POST',
+                'headers' => $headers,
+                'body'    => wp_json_encode( $data ),
+            ] );
+            if ( is_wp_error( $response ) ) {
+                if ( !$skip_error ) {
+                    update_option( 'km_error', 'mail' );
+                    update_option( 'km_error_message', $response->get_error_message() );
+                }
+                return false;
+            } else {
+                $http_code = $response['response']['code'] ?? 400;
+                $body = $response['body'];
+                if ( $http_code >= 400 ) {
+                    if ( !$skip_error ) {
+                        update_option( 'km_error', 'mail' );
+                        update_option( 'km_error_message', $body ?? $response['response']['message'] );
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private function sendTextLocalSMS(
+            $to,
+            $message,
+            $skip_error = false,
+            bool $log_message = true
+        ) {
+            $api_key = urlencode( get_option( 'kmcf7se_api_sid' ) );
+            $sender = get_option( 'kmcf7se_senderid' );
+            $url = "https://api.txtlocal.com/send/";
+            $data = [
+                'apikey'  => $api_key,
+                'message' => urlencode( $message ),
+                'sender'  => urlencode( $sender ),
+                'numbers' => $to,
+            ];
+            $response = wp_remote_request( $url, [
+                'method' => 'POST',
+                'body'   => $data,
+            ] );
+            if ( is_wp_error( $response ) ) {
+                if ( !$skip_error ) {
+                    update_option( 'km_error', 'mail' );
+                    update_option( 'km_error_message', $response->get_error_message() );
+                }
+                return false;
+            } else {
+                $body = $response['body'];
+                $decoded_body = json_decode( $body, true );
+                if ( $decoded_body['status'] == 'failure' ) {
+                    if ( !$skip_error ) {
+                        update_option( 'km_error', 'mail' );
+                        update_option( 'km_error_message', $body ?? $response['response']['message'] );
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private function sendTelnyxSMS(
+            $to,
+            $message,
+            $skip_error = false,
+            bool $log_message = true
+        ) {
+            $api_key = urlencode( get_option( 'kmcf7se_api_sid' ) );
+            $from = get_option( 'kmcf7se_senderid' );
+            $url = "https://api.telnyx.com/v2/messages";
+            $data = [
+                'text' => $message,
+                'from' => $from,
+                'to'   => $to,
+            ];
+            $headers = [
+                'Authorization' => 'Bearer ' . $api_key,
+                'Accept'        => 'application/json',
+                'Content-Type'  => 'application/json',
+            ];
+            $response = wp_remote_request( $url, [
+                'method'  => 'POST',
+                'headers' => $headers,
+                'body'    => wp_json_encode( $data ),
+                'type'    => 'SMS',
+            ] );
+            if ( is_wp_error( $response ) ) {
+                if ( !$skip_error ) {
+                    update_option( 'km_error', 'mail' );
+                    update_option( 'km_error_message', $response->get_error_message() );
+                }
+                return false;
+            } else {
+                $body = $response['body'];
+                $decoded_body = json_decode( $body, true );
+                if ( isset( $decoded_body['errors'] ) ) {
+                    if ( !$skip_error ) {
+                        update_option( 'km_error', 'mail' );
+                        update_option( 'km_error_message', $body ?? $response['response']['message'] );
+                    }
+                    return false;
+                }
+            }
             return true;
         }
 

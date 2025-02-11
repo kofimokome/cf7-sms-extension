@@ -4,23 +4,32 @@ namespace kmcf7_sms_extension;
 
 $provider = get_option( 'kmcf7se_provider', 'twilio' );
 
-$link     = "";
-switch($provider){
-    case 'twilio':
-        $link = "https://twilio.com";
-        break;
-    case 'nexmo':
-        $link = "https://ui.idp.vonage.com/ui/auth/registration";
-        break;
-    case 'clicksend':
-        $link = "https://dashboard.clicksend.com/signup";
+$link = "";
+switch ( $provider ) {
+	case 'twilio':
+		$link = "https://twilio.com";
+		break;
+	case 'nexmo':
+		$link = "https://ui.idp.vonage.com/ui/auth/registration";
+		break;
+	case 'clicksend':
+		$link = "https://dashboard.clicksend.com/signup";
+		break;
+	case 'messagebird':
+		$link = "https://dashboard.messagebird.com/";
+		break;
+	case 'textlocal':
+		$link = "https://control.txtlocal.co.uk/settings/apikeys/";
+		break;
+	case 'telnyx':
+		$link = "https://portal.telnyx.com/#/api-keys";
         break;
 }
 // capitalise first letter
 $provider = ucfirst( $provider );
 
 ?>
-    <h1><?php echo $provider ?> <?php _e( 'Account Configuration', KMCF7SE_TEXT_DOMAIN ) ?></h1>
+    <h1><?php echo $provider ?><?php _e( ' Account Configuration', KMCF7SE_TEXT_DOMAIN ) ?></h1>
 	<?php _e( "You will need to create a {$provider} Account. If you don't have one, you can create it <a href='{$link}'
                                                                                           target='_blank'>here</a>", KMCF7SE_TEXT_DOMAIN ) ?>
 	<?php settings_errors(); ?>
@@ -51,8 +60,8 @@ $provider = ucfirst( $provider );
             </div>
             <h2>Here are the major changes in this version</h2>
             <ol>
-                <li>Update Freemius</li>
-                <li>Add new SMS Provider, Clicksend</li>
+                <li>Security Fixes</li>
+                <li>Add new SMS Providers: Clicksend, MessageBird, TextLocal, Telnyx</li>
                 <li>Check out more plugins from me 😊( More Plugins Tab )</li>
             </ol>
         </div>

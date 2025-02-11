@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/kofimokome
 Tags: sms, contact form 7, twilio, nexmo, whatsapp
 Requires at least: 6.2
 Tested up to: 6.7
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -24,6 +24,10 @@ Note: This is just an extension. This plugin is not affiliated with or endorsed 
 2. Nexmo
 3. WhatsApp
 4. ClickSend
+5. MessageBird
+6. TextLocal
+7. Telnyx
+
 We will add more providers with time.
 
 == Pro Features ==
@@ -47,6 +51,11 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+= 1.3.5 =
+* Add new SMS Providers: Clicksend, MessageBird, TextLocal, Telnyx
+* Security Fixes
+* Update Freemius
+
 = 1.3.4 =
 * Add new SMS Provider, ClickSend
 * Update Freemius SDK
@@ -65,14 +74,14 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 = 1.3.2.1 =
 * Update Freemius SDK
-* Update WordPressTools library
+* Update WPTools library
 
 = 1.3.2 =
 * Add WhatsApp message feature
-* Update WordPressTools library
+* Update WPTools library
 
 = 1.3.1 =
-* Update WordPressTools library
+* Update WPTools library
 
 = 1.3.0 =
 * Add SMS History Tab
