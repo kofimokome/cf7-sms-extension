@@ -23,7 +23,7 @@ switch ( $provider ) {
 		break;
 	case 'telnyx':
 		$link = "https://portal.telnyx.com/#/api-keys";
-        break;
+		break;
 }
 // capitalise first letter
 $provider = ucfirst( $provider );
@@ -60,8 +60,8 @@ $provider = ucfirst( $provider );
             </div>
             <h2>Here are the major changes in this version</h2>
             <ol>
-                <li>Security Fixes</li>
-                <li>Add new SMS Providers: Clicksend, MessageBird, TextLocal, Telnyx</li>
+                <li>Update WordPress Tools</li>
+                <li> Fix translations were triggered too early error</li>
                 <li>Check out more plugins from me 😊( More Plugins Tab )</li>
             </ol>
         </div>

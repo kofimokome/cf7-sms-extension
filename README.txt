@@ -3,8 +3,8 @@ Contributors: kofimokome, freemius
 Donate link: https://ko-fi.com/kofimokome
 Tags: sms, contact form 7, twilio, nexmo, whatsapp
 Requires at least: 6.2
-Tested up to: 6.7
-Stable tag: 1.3.5
+Tested up to: 6.8
+Stable tag: 1.3.6
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -50,6 +50,10 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 
 == Changelog ==
+
+= 1.3.6 =
+* Update WordPress Tools
+* Fix translations were triggered too early error
 
 = 1.3.5 =
 * Add new SMS Providers: Clicksend, MessageBird, TextLocal, Telnyx
