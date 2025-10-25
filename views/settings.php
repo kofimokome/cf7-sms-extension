@@ -6,43 +6,43 @@ $provider = get_option( 'kmcf7se_provider', 'twilio' );
 
 $link = "";
 switch ( $provider ) {
-	case 'twilio':
-		$link = "https://twilio.com";
-		break;
-	case 'nexmo':
-		$link = "https://ui.idp.vonage.com/ui/auth/registration";
-		break;
-	case 'clicksend':
-		$link = "https://dashboard.clicksend.com/signup";
-		break;
-	case 'messagebird':
-		$link = "https://dashboard.messagebird.com/";
-		break;
-	case 'textlocal':
-		$link = "https://control.txtlocal.co.uk/settings/apikeys/";
-		break;
-	case 'telnyx':
-		$link = "https://portal.telnyx.com/#/api-keys";
-		break;
+    case 'twilio':
+        $link = "https://twilio.com";
+        break;
+    case 'nexmo':
+        $link = "https://ui.idp.vonage.com/ui/auth/registration";
+        break;
+    case 'clicksend':
+        $link = "https://dashboard.clicksend.com/signup";
+        break;
+    case 'messagebird':
+        $link = "https://dashboard.messagebird.com/";
+        break;
+    case 'textlocal':
+        $link = "https://control.txtlocal.co.uk/settings/apikeys/";
+        break;
+    case 'telnyx':
+        $link = "https://portal.telnyx.com/#/api-keys";
+        break;
 }
 // capitalise first letter
 $provider = ucfirst( $provider );
 
 ?>
     <h1><?php echo $provider ?><?php _e( ' Account Configuration', KMCF7SE_TEXT_DOMAIN ) ?></h1>
-	<?php _e( "You will need to create a {$provider} Account. If you don't have one, you can create it <a href='{$link}'
+    <?php _e( "You will need to create a {$provider} Account. If you don't have one, you can create it <a href='{$link}'
                                                                                           target='_blank'>here</a>", KMCF7SE_TEXT_DOMAIN ) ?>
-	<?php settings_errors(); ?>
+    <?php settings_errors(); ?>
     <form method="post" action="options.php" id="basic_settings_form">
-		<?php
+        <?php
 
-		settings_fields( 'kmcf7se_option' );
-		do_settings_sections( 'kmcf7se-sms-extension-options' );
+        settings_fields( 'kmcf7se_option' );
+        do_settings_sections( 'kmcf7se-sms-extension-options' );
 
-		submit_button();
-		?>
+        submit_button();
+        ?>
     </form>
-	<?php if ( get_option( 'kmcf7se_version', '0' ) !== CF7SmsExtension::getInstance()->getVersion() ): ?>
+    <?php if ( get_option( 'kmcf7se_version', '0' ) !== CF7SmsExtension::getInstance()->getVersion() ): ?>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -60,8 +60,8 @@ $provider = ucfirst( $provider );
             </div>
             <h2>Here are the major changes in this version</h2>
             <ol>
-                <li>Update WordPress Tools</li>
-                <li> Fix translations were triggered too early error</li>
+                <li>Update Freemius</li>
+                <li>Bug fixes and performance improvements</li>
                 <li>Check out more plugins from me 😊( More Plugins Tab )</li>
             </ol>
         </div>
@@ -130,7 +130,7 @@ $provider = ucfirst( $provider );
             }
         }
     </script>
-	<?php update_option( 'kmcf7se_version', CF7SmsExtension::getInstance()->getVersion() );
+    <?php update_option( 'kmcf7se_version', CF7SmsExtension::getInstance()->getVersion() );
 endif;
 // $settings->run();
 ?>

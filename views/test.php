@@ -15,7 +15,7 @@ namespace kmcf7_sms_extension;
             </td>
             <td>
                 <input type="tel" name="km_to"
-                       placeholder="+237670224092" required
+                       placeholder="+237671214191" required
                        autocomplete="off">
             </td>
         </tr>

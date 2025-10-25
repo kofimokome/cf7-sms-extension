@@ -8,10 +8,12 @@
  */
 namespace kmcf7_sms_extension;
 
+use Exception;
 use KMMenuPage;
 use KMSetting;
 use KMSubMenuPage;
 use KMValidator;
+use Throwable;
 use WPTools;
 if ( !class_exists( 'CF7SmsExtension' ) ) {
     class CF7SmsExtension {
@@ -27,7 +29,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
 
         public function __construct() {
             // our constructor
-            $this->version = '1.3.6';
+            $this->version = '1.3.6.1';
             $this->word_press_tools = WPTools::getInstance( __FILE__ );
             self::$instance = $this;
         }
@@ -362,7 +364,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                 echo $message;
                 ?></p>
                 </div>
-			<?php 
+            <?php 
             }
         }
 
@@ -382,12 +384,12 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                         current
                         version of Contact Form 7.
                         <br>If you notice any problems with your forms, please install Contact Form 7 <strong>version
-							<?php 
+                            <?php 
                 echo $this->cf7_version;
                 ?></strong>.
                     </p>
                 </div>
-			<?php 
+            <?php 
             }
         }
 
@@ -963,7 +965,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             <h1><?php 
             echo esc_html( __( 'SMS Settings', KMCF7SE_TEXT_DOMAIN ) );
             ?></h1>
-			<?php 
+            <?php 
             _e( "You can use the following tags", KMCF7SE_TEXT_DOMAIN );
             $post->suggest_mail_tags();
             ?>
@@ -983,7 +985,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             ?>[visitor-phone]"
                        class="large-text"
                        value="<?php 
-            echo esc_attr( $sms['visitor_phone'] );
+            echo esc_attr( $sms['visitor_phone'] ?? '' );
             ?>"
                        placeholder="[your-phone-number]"/>
             </fieldset>
@@ -1012,7 +1014,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             ?>[visitor-whatsapp-phone]"
                        class="large-text"
                        value="<?php 
-            echo esc_attr( $sms['visitor_whatsapp_phone'] );
+            echo esc_attr( $sms['visitor_whatsapp_phone'] ?? '' );
             ?>"
                        placeholder="[your-number]"/>
             </fieldset>
@@ -1028,7 +1030,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                        class="large-text"
                        placeholder="hello_world"
                        value="<?php 
-            echo esc_textarea( $sms['visitor_whatsapp_template'] );
+            echo esc_textarea( $sms['visitor_whatsapp_template'] ?? '' );
             ?>"/>
             </fieldset>
             <br>
@@ -1041,10 +1043,10 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             ?>
                         )</strong>:
                 </legend>
-				<?php 
+                <?php 
             ?>
 
-				<?php 
+                <?php 
             if ( kmcf7se_fs()->is_free_plan() || kmcf7se_fs()->can_use_premium_code() && !kmcf7se_fs()->is_premium() ) {
                 ?>
 
@@ -1057,7 +1059,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                     <strong style="color: red">Upgrade to the paid version to send a WhatsApp template with
                         parameters</strong>
 
-				<?php 
+                <?php 
             }
             ?>
             </fieldset>
@@ -1068,7 +1070,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             <h3>SMS Settings:</h3>
             <fieldset>
                 <legend>
-					<?php 
+                    <?php 
             _e( "Your Phone Number: (<strong>leave blank if you do not want to receive an SMS</strong>) <br>\n                <b>You can add more numbers, separated by a comma (,). Example: [your-number], +237670223029,\n                    +12345678901 </b>", KMCF7SE_TEXT_DOMAIN );
             ?>
                 </legend>
@@ -1078,7 +1080,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                        class="large-text"
                        placeholder="[your-number], +237670223029, +12345678901"
                        value="<?php 
-            echo esc_attr( $sms['your_phone'] );
+            echo esc_attr( $sms['your_phone'] ?? '' );
             ?>"/>
             </fieldset>
             <br>
@@ -1086,7 +1088,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                 <legend><?php 
             _e( "Your Response Message", KMCF7SE_TEXT_DOMAIN );
             ?>:</legend>
-                <textarea id="<kmcf7se-your-message" name="<?php 
+                <textarea id="kmcf7se-your-message" name="<?php 
             echo $options_name;
             ?>[your-message]" cols="100"
                           rows="8"
@@ -1095,7 +1097,9 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             echo esc_textarea( $sms['your_message'] );
             ?></textarea>
             </fieldset>
-            <h3>WhatsApp Settings:</h3>
+            <h3><?php 
+            _e( "WhatsApp Settings" );
+            ?>:</h3>
             <fieldset>
                 <legend>
                     <strong><?php 
@@ -1109,7 +1113,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                        class="large-text"
                        placeholder="[your-number], +237670223029, +12345678901"
                        value="<?php 
-            echo esc_attr( $sms['your_whatsapp_phone'] );
+            echo esc_attr( $sms['your_whatsapp_phone'] ?? '' );
             ?>"/>
             </fieldset>
             <br>
@@ -1124,7 +1128,7 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                        class="large-text"
                        placeholder="hello_world"
                        value="<?php 
-            echo esc_textarea( $sms['your_whatsapp_template'] );
+            echo esc_textarea( $sms['your_whatsapp_template'] ?? '' );
             ?>"/>
             </fieldset>
             <br>
@@ -1137,10 +1141,10 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
             ?>
                         )</strong>:
                 </legend>
-				<?php 
+                <?php 
             ?>
 
-				<?php 
+                <?php 
             if ( kmcf7se_fs()->is_free_plan() || kmcf7se_fs()->can_use_premium_code() && !kmcf7se_fs()->is_premium() ) {
                 ?>
                     <input type="text"
@@ -1152,11 +1156,11 @@ if ( !class_exists( 'CF7SmsExtension' ) ) {
                     <strong style="color: red">Upgrade to the paid version to send a WhatsApp template with
                         parameters</strong>
 
-				<?php 
+                <?php 
             }
             ?>
             </fieldset>
-			<?php 
+            <?php 
         }
 
         /**

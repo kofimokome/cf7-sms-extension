@@ -1,5 +1,13 @@
 # Change Log
 
+## v1.3.6.1 Changes
+1. Update Freemius
+2. Bug fixes and performance improvements
+
+## v1.3.6 Changes
+1. Update WordPress Tools
+2. Fix translations were triggered too early error
+
 ## v1.3.5 Changes
 
 1. Add new SMS Providers: Clicksend, MessageBird, TextLocal, Telnyx
