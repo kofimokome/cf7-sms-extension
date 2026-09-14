@@ -9,9 +9,9 @@
  * Plugin Name: SMS Extension for Contact Form 7
  * Plugin URI: https://github.com/kofimokome/cf7-sms-extension
  * Description: Receive text message notifications when a form is submitted.
- * Version: 1.3.6.1
+ * Version: 1.3.6.2
  * Author: Kofi Mokome
- * Author URI: www.kofimokome.stream
+ * Author URI: www.kofimoko.me
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: cf7-sms-extension
@@ -23,9 +23,6 @@ namespace kmcf7_sms_extension;
 use KMEnv;
 use WPTools;
 defined( 'ABSPATH' ) or die( 'Giving To Cesar What Belongs To Caesar' );
-if ( !defined( 'KMCF7SE_TEXT_DOMAIN' ) ) {
-    define( 'KMCF7SE_TEXT_DOMAIN', 'cf7-sms-extension' );
-}
 $error = false;
 if ( function_exists( 'kmcf7_sms_extension\\kmcf7se_fs' ) ) {
     kmcf7se_fs()->set_basename( false, __FILE__ );
@@ -42,23 +39,24 @@ if ( function_exists( 'kmcf7_sms_extension\\kmcf7se_fs' ) ) {
                 // Include Freemius SDK.
                 require_once dirname( __FILE__ ) . '/freemius/start.php';
                 $kmcf7se_fs = fs_dynamic_init( array(
-                    'id'             => '13504',
-                    'slug'           => 'cf7-sms-extension',
-                    'type'           => 'plugin',
-                    'public_key'     => 'pk_2bb50bfd24d147612e9e0c4fa3de2',
-                    'is_premium'     => false,
-                    'premium_suffix' => 'Basic',
-                    'has_addons'     => false,
-                    'has_paid_plans' => true,
-                    'trial'          => array(
+                    'id'               => '13504',
+                    'slug'             => 'cf7-sms-extension',
+                    'type'             => 'plugin',
+                    'public_key'       => 'pk_2bb50bfd24d147612e9e0c4fa3de2',
+                    'is_premium'       => false,
+                    'premium_suffix'   => 'Basic',
+                    'has_addons'       => false,
+                    'has_paid_plans'   => true,
+                    'trial'            => array(
                         'days'               => 7,
                         'is_require_payment' => false,
                     ),
-                    'menu'           => array(
+                    'menu'             => array(
                         'slug'    => 'kmcf7se-sms-extension-options',
                         'contact' => false,
                     ),
-                    'is_live'        => true,
+                    'is_live'          => true,
+                    'is_org_compliant' => true,
                 ) );
             }
             return $kmcf7se_fs;
@@ -100,7 +98,7 @@ if ( function_exists( 'kmcf7_sms_extension\\kmcf7se_fs' ) ) {
         $requires = apply_filters( 'kmcf7se_requires_filter', [] );
         foreach ( $requires as $file ) {
             if ( !($filepath = file_exists( $file )) ) {
-                KMCF7SEErrorNotice( sprintf( __( 'Error locating <b>%s</b> for inclusion', KMCF7SE_TEXT_DOMAIN ), $file ) );
+                KMCF7SEErrorNotice( sprintf( __( 'Error locating <b>%s</b> for inclusion', 'cf7-sms-extension' ), $file ) );
                 $error = true;
             } else {
                 require_once $file;
@@ -115,7 +113,7 @@ if ( function_exists( 'kmcf7_sms_extension\\kmcf7se_fs' ) ) {
         $includes = apply_filters( 'kmcf7se_includes_filter', [] );
         foreach ( $includes as $file ) {
             if ( !($filepath = file_exists( $file )) ) {
-                KMCF7SEErrorNotice( sprintf( __( 'Error locating <b>%s</b> for inclusion', KMCF7SE_TEXT_DOMAIN ), $file ) );
+                KMCF7SEErrorNotice( sprintf( __( 'Error locating <b>%s</b> for inclusion', 'cf7-sms-extension' ), $file ) );
                 $error = true;
             } else {
                 include_once $file;

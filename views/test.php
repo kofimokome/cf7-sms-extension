@@ -2,7 +2,7 @@
 
 namespace kmcf7_sms_extension;
 ?>
-<h1><?php _e( "Send a test Message", KMCF7SE_TEXT_DOMAIN ) ?></h1>
+<h1><?php _e( "Send a test Message", 'cf7-sms-extension' ) ?></h1>
 <hr>
 
 <form action="" method="post">
@@ -10,7 +10,7 @@ namespace kmcf7_sms_extension;
         <tr>
             <td>
                 <label for="km_to">
-					<?php _e( "Phone number", KMCF7SE_TEXT_DOMAIN ) ?>:
+					<?php _e( "Phone number", 'cf7-sms-extension' ) ?>:
                 </label>
             </td>
             <td>
@@ -22,7 +22,7 @@ namespace kmcf7_sms_extension;
         <tr style="display: none" class="km-whatsapp-fields">
             <td>
                 <label for="km_whatsapp_template">
-					<?php _e( "WhatsApp Template", KMCF7SE_TEXT_DOMAIN ) ?>:
+					<?php _e( "WhatsApp Template", 'cf7-sms-extension' ) ?>:
                 </label>
             </td>
             <td>
@@ -34,7 +34,7 @@ namespace kmcf7_sms_extension;
         <tr style="display: none" class="km-whatsapp-fields">
             <td>
                 <label for="km_whatsapp_template_parameters">
-					<?php _e( "WhatsApp Template Parameters", KMCF7SE_TEXT_DOMAIN ) ?>:
+					<?php _e( "WhatsApp Template Parameters", 'cf7-sms-extension' ) ?>:
                 </label>
             </td>
             <td>
@@ -57,7 +57,7 @@ namespace kmcf7_sms_extension;
         <tr>
             <td></td>
             <td>
-                <button style="background:green; color:white; padding: 7px 10px; border:none;border-radius:5px;"><?php _e( "Send Message", KMCF7SE_TEXT_DOMAIN ) ?></button>
+                <button style="background:green; color:white; padding: 7px 10px; border:none;border-radius:5px;"><?php _e( "Send Message", 'cf7-sms-extension' ) ?></button>
             </td>
         </tr>
     </table>
@@ -69,11 +69,11 @@ if ( isset( $_POST['km_to'] ) ) :
 	if ( isset( $_POST['km_send_sms'] ) ) {
 		if ( $instance->sendSms( $_POST['km_to'], 'This is a test message from the Contact Form 7 SMS Extension Plugin', false, false ) ):?>
             <div style="border:solid green 2px; width: 340px; padding:7px 10px;margin-top:10px;text-align:center;">
-				<?php _e( "Your SMS has been sent", KMCF7SE_TEXT_DOMAIN ) ?>
+				<?php _e( "Your SMS has been sent", 'cf7-sms-extension' ) ?>
             </div>
 		<?php else: ?>
             <div style="border:solid red 2px; width: 400px; padding:7px 10px;margin-top:10px;">
-				<?php _e( "Your SMS was not sent", KMCF7SE_TEXT_DOMAIN ) ?>
+				<?php _e( "Your SMS was not sent", 'cf7-sms-extension' ) ?>
             </div>
 		<?php endif;
 	}
@@ -86,29 +86,29 @@ if ( isset( $_POST['km_to'] ) ) :
 		} );
 		if ( $instance->sendWhatsAppMessage( $_POST['km_to'], $template, $params ) ):?>
             <div style="border:solid green 2px; width: 340px; padding:7px 10px;margin-top:10px;text-align:center;">
-				<?php _e( "Your WhatsApp message has been sent", KMCF7SE_TEXT_DOMAIN ) ?>
+				<?php _e( "Your WhatsApp message has been sent", 'cf7-sms-extension' ) ?>
             </div>
 		<?php else: ?>
             <div style="border:solid red 2px; width: 400px; padding:7px 10px;margin-top:10px;">
-				<?php _e( "Your WhatsApp message was not sent", KMCF7SE_TEXT_DOMAIN ) ?>
+				<?php _e( "Your WhatsApp message was not sent", 'cf7-sms-extension' ) ?>
             </div>
 		<?php endif;
 	}
 	if ( get_option( 'km_error_message', '' ) != '' ) : ?>
         <div style="border:solid red 2px; width: 400px; padding:7px 10px;margin-top:10px;">
-            <h3><?php _e( "An error occurred !!!", KMCF7SE_TEXT_DOMAIN ) ?></h3>
+            <h3><?php _e( "An error occurred !!!", 'cf7-sms-extension' ) ?></h3>
 			<?php $error = json_decode( get_option( 'km_error_message' ) ); ?>
             <table>
                 <tr>
-                    <td><b><?php _e( "Error Code", KMCF7SE_TEXT_DOMAIN ) ?>:</b></td>
+                    <td><b><?php _e( "Error Code", 'cf7-sms-extension' ) ?>:</b></td>
                     <td><?php echo $error->code ?? '' ?></td>
                 </tr>
                 <tr>
-                    <td><b><?php _e( "Message", KMCF7SE_TEXT_DOMAIN ) ?>:</b></td>
+                    <td><b><?php _e( "Message", 'cf7-sms-extension' ) ?>:</b></td>
                     <td><?php echo $error->message ?? get_option( 'km_error_message' ) ?> </td>
                 </tr>
                 <tr>
-                    <td><b><?php _e( "More Info", KMCF7SE_TEXT_DOMAIN ) ?>:</b></td>
+                    <td><b><?php _e( "More Info", 'cf7-sms-extension' ) ?>:</b></td>
                     <td><?php echo $error->more_info ?? '' ?></td>
                 </tr>
             </table>
@@ -120,7 +120,7 @@ if ( isset( $_POST['km_to'] ) ) :
 	else:
 		?>
         <div style="border:solid green 2px; width: 340px; padding:7px 10px;margin-top:10px;text-align:center;">
-			<?php _e( "Your message has been sent", KMCF7SE_TEXT_DOMAIN ) ?>
+			<?php _e( "Your message has been sent", 'cf7-sms-extension' ) ?>
         </div>
 	<?php endif; endif; ?>
 

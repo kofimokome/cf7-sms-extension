@@ -1,5 +1,9 @@
 # Change Log
 
+## v1.3.6.2 Changes
+1. Update Freemius
+2. Bug fixes and performance improvements
+
 ## v1.3.6.1 Changes
 1. Update Freemius
 2. Bug fixes and performance improvements

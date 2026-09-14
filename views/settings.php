@@ -29,9 +29,9 @@ switch ( $provider ) {
 $provider = ucfirst( $provider );
 
 ?>
-    <h1><?php echo $provider ?><?php _e( ' Account Configuration', KMCF7SE_TEXT_DOMAIN ) ?></h1>
+    <h1><?php echo $provider ?><?php _e( ' Account Configuration', 'cf7-sms-extension' ) ?></h1>
     <?php _e( "You will need to create a {$provider} Account. If you don't have one, you can create it <a href='{$link}'
-                                                                                          target='_blank'>here</a>", KMCF7SE_TEXT_DOMAIN ) ?>
+                                                                                          target='_blank'>here</a>", 'cf7-sms-extension' ) ?>
     <?php settings_errors(); ?>
     <form method="post" action="options.php" id="basic_settings_form">
         <?php
